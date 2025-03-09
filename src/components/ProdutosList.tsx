@@ -1,4 +1,5 @@
 import { Produto } from "../services/produtoService";
+import { ProdutoCard } from "./Produto";
 
 interface ProdutosListProps {
     produtos: Produto[];
@@ -6,13 +7,11 @@ interface ProdutosListProps {
 
 const ProdutosList: React.FC<ProdutosListProps> = ({ produtos }) => {
     return (
-        <ul className="space-y-2">
+        <div className="flex flex-wrap gap-4 justify-center items-center">
             {produtos.map((produto) => (
-                <li key={produto.idProduto} className="p-2 border rounded-lg shadow-sm">
-                    <span className="font-bold">{produto.nome}</span> - R$ {produto.preco}
-                </li>
+                <ProdutoCard key={produto.idProduto} produto={produto} />
             ))}
-        </ul>
+        </div>
     );
 };
 
