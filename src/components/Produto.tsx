@@ -1,14 +1,30 @@
 import { Link } from "react-router-dom";
-import { Produto } from "../services/produtoService";
-import { FaCube, FaCommentDots, FaRulerCombined, FaShoppingBag, FaCalendar, FaCoins} from "react-icons/fa";
+import { Produto, inativarProduto, ativarProduto } from "../services/produtoService";
+import { FaCube, FaCommentDots, FaRulerCombined, FaShoppingBag, FaCalendar, FaCoins } from "react-icons/fa";
 
 interface ProdutoCardProps {
     produto: Produto;
 }
 
+const handleTrocarStatus = async (idProduto: number, produto: Produto) => {
+    const confirmacao = window.confirm(`Tem certeza que deseja ${produto.ativo ? 'inativar' : 'ativar'} o produto ${produto.nome} ?`);
+
+    if (confirmacao) {
+        const resultado = produto.ativo ? await inativarProduto(idProduto) : await ativarProduto(idProduto);
+
+        if (resultado && resultado.success) {
+            alert(`Produto ${produto.nome} ${!produto.ativo ? 'ativado' : 'inativado'} com sucesso!`);
+            window.location.reload();
+        } else {
+            console.error(`Erro ao ${produto.ativo ? 'inativar' : 'ativar'} o produto: `, produto.nome);
+            alert(`Erro ao inativar o produto ${produto.nome}!\n${resultado.error || 'Erro desconhecido'}`);
+        }
+    }
+};
+
 export const ProdutoCard: React.FC<ProdutoCardProps> = ({ produto }) => {
     return (
-        <div className="rounded-2xl min-w-64 min-h-72 bg-gray-800 flex flex-col justify-between items-center shadow-lg shadow-gray-700">
+        <div className={`rounded-2xl min-w-64 min-h-72 ${!produto.ativo ? 'bg-rose-950' : 'bg-gray-800'} flex flex-col justify-between items-center shadow-lg shadow-gray-700`}>
 
             <div className="w-full rounded-t-2xl flex h-12 justify-around items-center p-2 bg-amber-100">
                 <div className="h-full flex items-center justify-center">
@@ -62,12 +78,12 @@ export const ProdutoCard: React.FC<ProdutoCardProps> = ({ produto }) => {
             </div>
 
             <div className="w-full rounded-b-2xl flex h-12 justify-around items-center bg-amber-100">
-                <Link to={`/produtos/u/${produto.idProduto}`} className="cursor-pointer w-1/2 flex justify-center items-center bg-amber-200 text-gray-600 font-bold rounded-bl-2xl m-1 p-2 hover:m-0">
+                <Link to={`/produtos/edit/${produto.idProduto}`} className="cursor-pointer w-1/2 flex justify-center items-center bg-amber-200 text-gray-800 font-bold rounded-bl-2xl m-1 p-2">
                     Editar
                 </Link>
-                <button className="cursor-pointer w-1/2 flex justify-center items-center bg-orange-300 text-gray-600 font-bold rounded-br-2xl m-1 p-2 hover:m-0">
-                    Excluir
-                </button>
+                <Link onClick={() => handleTrocarStatus(Number(produto.idProduto), produto)} to={'#'} className={`cursor-pointer w-1/2 flex justify-center items-center ${produto.ativo ? 'bg-red-700' : 'bg-green-500'} transition-all duration-150 ease-in-out ${produto.ativo ? 'hover:bg-red-900' : 'hover:bg-green-700'} text-gray-600 font-bold rounded-br-2xl m-1 p-2`}>
+                    <p className="text-md font-semibold text-amber-100 hover">{produto.ativo ? 'Inativar' : 'Ativar'}</p>
+                </Link>
             </div>
         </div>
     );

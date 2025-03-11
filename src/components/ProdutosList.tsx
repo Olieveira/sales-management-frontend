@@ -8,9 +8,10 @@ interface ProdutosListProps {
 const ProdutosList: React.FC<ProdutosListProps> = ({ produtos }) => {
     return (
         <div className="flex flex-wrap gap-4 justify-center items-center">
-            {produtos.map((produto) => (
-                <ProdutoCard key={produto.idProduto} produto={produto} />
-            ))}
+            {produtos.map((produto) => {
+                if (produto.ativo || !produto.ativo) return <ProdutoCard key={produto.idProduto} produto={produto} />
+            }
+            )}
         </div>
     );
 };
