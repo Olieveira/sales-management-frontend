@@ -27,7 +27,7 @@ export const Produtos = () => {
                 <div className="flex flex-col items-center justify-center">
                     <div className='flex w-full justify-center items-center'>
                         <div className='px-2'>
-                            <Link to={`/produtos/c`}>
+                            <Link to={`/produtos/new`}>
                                 <FaPlusSquare size={36} className="text-amber-100 hover:text-green-200 transition-all duration-150" />
                             </Link>
                         </div>

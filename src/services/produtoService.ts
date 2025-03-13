@@ -28,7 +28,7 @@ export const createProduto = async (produto: Omit<Produto, 'idProduto' | 'criado
 };
 
 export const updateProduto = async (idProduto: number, produto: Partial<Omit<Produto, 'idProduto' | 'criadoEm'>>) => {
-    const response = await api.put(`/produtos/edit/${idProduto}`, produto);
+    const response = await api.put(`/produtos/${idProduto}`, produto);
     return response.data;
 };
 

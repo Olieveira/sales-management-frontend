@@ -24,13 +24,14 @@ const handleTrocarStatus = async (idProduto: number, produto: Produto) => {
 
 export const ProdutoCard: React.FC<ProdutoCardProps> = ({ produto }) => {
     return (
-        <div className={`rounded-2xl min-w-64 min-h-72 ${!produto.ativo ? 'bg-rose-950' : 'bg-gray-800'} flex flex-col justify-between items-center shadow-lg shadow-gray-700`}>
+        <div className={`rounded-2xl w-72 min-h-72 ${!produto.ativo ? 'bg-rose-950' : 'bg-gray-800'} flex flex-col justify-between items-center shadow-lg shadow-gray-700`}>
 
             <div className="w-full rounded-t-2xl flex h-12 justify-around items-center p-2 bg-amber-100">
                 <div className="h-full flex items-center justify-center">
                     <FaCube size={24} className="text-gray-600" />
                 </div>
-                <h2 className="text-lg font-bold text-gray-600">{produto.nome}</h2>
+                <h2 className="text-lg text-center font-semibold text-gray-600 px-2 shrink leading-tight">{produto.nome}</h2>
+                <h3 className="text-lg text-center font-semibold text-gray-600">{produto.idProduto}</h3>
             </div>
 
             <div className="flex flex-row justify-center items-center gap-4 mt-4 p-1">
