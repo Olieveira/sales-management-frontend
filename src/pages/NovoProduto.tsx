@@ -22,6 +22,12 @@ export const CreateForm: React.FC<CreateFormProps> = ({ id }) => {
                 if (id !== undefined) {
                     const produtoData = await getProduto(id);
                     setFormProduto(produtoData);
+                } else {
+                    setFormProduto((prevProduto) => ({
+                        ...(prevProduto as Produto),
+                        ativo: true,
+                        criadoEm: new Date().toISOString().split('T')[0],
+                    }));
                 }
             } catch (error) {
                 navigate("/produtos/new");

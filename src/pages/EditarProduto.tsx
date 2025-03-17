@@ -141,14 +141,22 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                         <label className='block text-amber-100 text-sm font-bold mb-2' htmlFor='ativo'>
                             Status do Produto
                         </label>
-                        <input
-                            type='text'
-                            id='ativo'
-                            name='ativo'
-                            value={produto?.ativo ? 'Ativo' : 'Inativo'}
-                            onChange={handleChange}
-                            className='shadow appearance-none border rounded w-full py-2 px-3 text-amber-100 leading-tight focus:outline-none focus:shadow-outline'
-                        />
+                        <div className={`flex rounded-2xl bg-gray-800 w-1/2 h-full px transition-all duration-300 justify-center`}>
+                            <div className='w-1/2'>
+                                <button
+                                    type='button'
+                                    id='ativo'
+                                    name='ativo'
+                                    onClick={() => setProduto((prevProduto) => ({
+                                        ...prevProduto as Produto,
+                                        ativo: !prevProduto?.ativo,
+                                    }))}
+                                    className={`cursor-pointer transition-all duration-300 shadow appearance-none border rounded w-full py-2 px-3 text-gray-800 ${produto?.ativo ? 'bg-green-200 -translate-x-14 rounded-l-2xl' : 'bg-red-300 translate-x-14 rounded-r-2xl'}`}
+                                >
+                                    {produto?.ativo ? 'Ativo' : 'Inativo'}
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
                     <div className='w-full flex justify-between items-center'>
@@ -165,19 +173,21 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                                 className='shadow appearance-none border border-amber-100 rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline'
                             />
                         </div>
-                        <div className='mb-4'>
-                            <label className='block text-amber-100 text-sm font-bold mb-2' htmlFor='inativoEm'>
-                                Inativo Em
-                            </label>
-                            <input
-                                type='date'
-                                id='inativoEm'
-                                name='inativoEm'
-                                value={produto?.inativoEm ? new Date(produto.inativoEm).toISOString().split('T')[0] : '-'}
-                                onChange={handleChange}
-                                className='shadow appearance-none border border-amber-100 rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline'
-                            />
-                        </div>
+                        {!produto?.ativo && (
+                            <div className='mb-4'>
+                                <label className='block text-amber-100 text-sm font-bold mb-2' htmlFor='inativoEm'>
+                                    Inativo Em
+                                </label>
+                                <input
+                                    type='date'
+                                    id='inativoEm'
+                                    name='inativoEm'
+                                    value={produto?.inativoEm ? new Date(produto?.inativoEm).toISOString().split('T')[0] : '-'}
+                                    onChange={handleChange}
+                                    className='shadow appearance-none border border-amber-100 rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline'
+                                />
+                            </div>
+                        )}
                     </div>
 
                     <div className='flex items-center justify-between'>

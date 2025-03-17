@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import { Produto, inativarProduto, ativarProduto } from "../services/produtoService";
-import { FaCube, FaCommentDots, FaRulerCombined, FaShoppingBag, FaCalendar, FaCoins } from "react-icons/fa";
+import { FaCube, FaCommentDots, FaRulerCombined, FaShoppingBag, FaCalendar, FaCoins, FaCubes, FaBoxes, FaTrash } from "react-icons/fa";
 
 interface ProdutoCardProps {
     produto: Produto;
+    quantidade?: number; // Para renderização em vendas 
 }
 
 const handleTrocarStatus = async (idProduto: number, produto: Produto) => {
@@ -87,5 +88,48 @@ export const ProdutoCard: React.FC<ProdutoCardProps> = ({ produto }) => {
                 </Link>
             </div>
         </div>
+    );
+};
+
+interface ProdutoListItemProps {
+    produto: Produto;
+    quantidade?: number;
+    onDelete?: (idProduto: number) => void;
+}
+
+export const ProdutoListItem: React.FC<ProdutoListItemProps> = ({ produto, quantidade, onDelete }) => {
+
+    return (
+        <div className={`relative flex justify-around rounded-2xl w-full gap-4 min-h-10 p-2 mx-2 ${!produto.ativo ? 'bg-rose-950' : 'bg-gray-800'} flex shadow-lg shadow-gray-700`}>
+            <div className="flex justify-between items-center gap-x-2">
+                <FaCubes size={24} className="text-amber-100" />
+                <span className="text-amber-100 ml-2 text-base">{produto.nome}</span>
+            </div>
+            <div className="flex justify-between items-center gap-x-2">
+                <FaBoxes size={24} className="text-amber-100" />
+                <span className="text-amber-100 ml-2 text-base">{quantidade}</span>
+            </div>
+            {onDelete && (
+                <div onClick={() => onDelete(produto.idProduto)} className="cursor-pointer absolute -top-4.5 -right-2.5 rounded-full bg-gray-800 p-1.5 hover:p-2 transition-all duration-100">
+                    <FaTrash size={16} className="text-red-200" />
+                </div>
+            )}
+        </div >
+    );
+};
+
+interface SelectProdutoListItem{
+    produto: Produto;
+}
+
+export const SelectProdutoListItem: React.FC<ProdutoListItemProps> = ({ produto }) => {
+
+    return (
+        <div className={`cursor-pointer flex justify-around rounded-2xl gap-4 p-2 mx-2 min-w-48 ${!produto.ativo ? 'bg-rose-950' : 'bg-gray-800'} flex shadow-lg shadow-gray-700`}>
+            <div className="flex justify-between items-center gap-x-2">
+                <FaCubes size={24} className="text-amber-100" />
+                <span className="text-amber-100 ml-2 text-base">{produto.nome}</span>
+            </div>
+        </div >
     );
 };

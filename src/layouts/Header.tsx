@@ -1,25 +1,26 @@
 import React from 'react';
-import { Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
-// Definindo o tipo para os itens do menu
 interface MenuItem {
   label: string;
   path: string;
 }
 
 const Header: React.FC = () => {
-  // Definindo os itens do menu
+
   const menuItems: MenuItem[] = [
     { label: 'Home', path: '/' },
     { label: 'Produtos', path: '/produtos' },
+    { label: 'Vendas', path: '/vendas' },
   ];
 
   return (
-    <header className="bg-gray-800 text-white p-4 static w-screen h-16 z-10 shadow-lg shadow-neutral-600">
-      <div className="container mx-auto flex justify-between items-center z-10">
-        {/* Logo */}
-        <h1 className="text-2xl font-bold">Creative Mimos</h1>
-
+    <header className="flex items-center w-screen h-16 bg-gray-800 text-white shadow-lg shadow-neutral-600">
+      <div className="flex w-full justify-between px-6 items-center">
+        <Link to={menuItems[0].path}>
+          <h1 className="text-2xl font-bold hidden sm:block">Creative Mimos</h1>
+          <div className="bg-cover w-14 h-14 rounded-2xl bg-[url(./assets/logo.png)] sm:hidden" />
+        </Link>
         {/* Menu de navegação */}
         <nav>
           <ul className="flex space-x-6">
