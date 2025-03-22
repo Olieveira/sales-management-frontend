@@ -30,7 +30,7 @@ export const Vendas = () => {
     return (
         <div className='bg-gray-700 h-screen'>
             <Header />
-            <div className='flex-col justify-center items-center p-4 pb-7'>
+            <div className='flex-col justify-center items-center pb-7'>
                 <div className="flex flex-col items-center justify-center">
                     <div className='flex w-full justify-center items-center'>
                         <div className='px-2'>

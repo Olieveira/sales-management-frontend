@@ -11,7 +11,17 @@ interface EditFormProps {
 }
 
 export const EditForm: React.FC<EditFormProps> = ({ id }) => {
-    const [produto, setProduto] = useState<Produto>();
+    const [produto, setProduto] = useState<Produto>({
+        idProduto: 0,
+        nome: '',
+        unidade: '',
+        preco: 0,
+        estoqueUn: 0,
+        descricao: '',
+        ativo: true,
+        criadoEm: new Date().toISOString().split('T')[0],
+        inativoEm: ''
+    });
     const [originalProduto, setOriginalProduto] = useState<Produto>();
 
     const navigate = useNavigate();
@@ -116,6 +126,7 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                                     Estoque
                                 </label>
                                 <input
+                                    type='number'
                                     id='estoqueUn'
                                     name='estoqueUn'
                                     value={produto?.estoqueUn}
@@ -182,7 +193,7 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                                     type='date'
                                     id='inativoEm'
                                     name='inativoEm'
-                                    value={produto?.inativoEm ? new Date(produto?.inativoEm).toISOString().split('T')[0] : '-'}
+                                    value={produto?.inativoEm ? new Date(produto?.inativoEm).toISOString().split('T')[0] : new Date(Date.now()).toISOString().split('T')[0]}
                                     onChange={handleChange}
                                     className='shadow appearance-none border border-amber-100 rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline'
                                 />

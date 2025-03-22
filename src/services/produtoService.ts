@@ -35,7 +35,7 @@ export const updateProduto = async (idProduto: number, produto: Partial<Omit<Pro
 export const inativarProduto = async (idProduto: number) => {
     const response = await api.put(`/produtos/inativar/${idProduto}`, {
         ativo: false,
-        inativoEm: new Date().toISOString()
+        inativoEm: new Date(Date.now()).toISOString().split('T')[0]
     });
 
     return response.data;

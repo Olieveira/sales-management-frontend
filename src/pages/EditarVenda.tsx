@@ -7,6 +7,7 @@ import { getVenda, updateVenda, Venda, deleteVenda } from '../services/vendasSer
 import ProdutosList from '../components/ProdutosList';
 import { Produto } from '../services/produtoService';
 import { useProdutos } from '../hooks/useProdutos';
+import { useStatus } from '../hooks/useStatus';
 
 interface EditFormProps {
     id?: Number;
@@ -17,23 +18,32 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
     const [vendaOriginal, setVendaOriginal] = useState<Venda>({} as Venda);
     const [produtos, setProdutos] = useState<Array<{ produto: Produto, quantidade?: number }>>([])
     const [produtosOriginal, setProdutosOriginal] = useState<Array<{ produto: Produto, quantidade?: number }>>([])
-    const status = ['Pendente', 'Em andamento', 'Concluído', 'Cancelado', 'Atrasado', 'Retornado']
+    const [selectProduto, setSelectProduto] = useState(false);
     const { data: todosProdutos } = useProdutos();
+    const { data: status } = useStatus();
 
     const navigate = useNavigate();
 
     const handleDeleteProduto = (idProduto: number) => {
         const newProdutos = produtos?.filter((produto) => produto.produto.idProduto !== idProduto);
+        console.log('Handle delete para o id ', idProduto, ' acionado!\nProduto antes do filter:\n', produtos, '\nProdutos depois do filter:\n', newProdutos)
         setProdutos(newProdutos);
     }
-    const [selectProduto, setSelectProduto] = useState(false);
+
+    const handleAddNewProduct = (produto: Produto) => {
+        const quantidade = parseInt(prompt("Digite a quantidade do produto:", "1") || "0", 10);
+        setProdutos([...produtos, { produto, quantidade }]);
+        console.log('UseState produtos pós adição do produto:\n', produtos)
+        setSelectProduto(!selectProduto);
+    }
+
 
     useEffect(() => {
         const fetchVenda = async () => {
             try {
                 const vendaData = await getVenda(id as number);
                 if (vendaData) {
-                    setVenda(vendaData);
+                    setVenda(vendaData); // ocasionando aviso no console log
                     setVendaOriginal(vendaData);
                     setProdutos(vendaData.itensVenda.map((venda) => { return { produto: venda.produto, quantidade: venda.quantidade } }));
                     setProdutosOriginal(vendaData.itensVenda.map((venda) => { return { produto: venda.produto, quantidade: venda.quantidade } }));
@@ -105,7 +115,7 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
     return (
         <div className='bg-gray-700 h-screen relative'>
             <Header />
-            <div className='flex flex-col mt-6 justify-center items-center p-4'>
+            <div className='flex flex-col mt-6 justify-center items-center sm:p-4'>
                 <form onSubmit={handleSubmit} className='bg-gray-900 rounded shadow-2xl w-full max-w-lg shadow-gray-900 relative flex flex-col justify-center items-center'>
                     <div className='flex justify-between items-center w-full bg-gray-800 rounded rounded-b-2xl px-5 py-2 shadow-gray-900 shadow-md'>
 
@@ -169,8 +179,8 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                                 className='cursor-pointer text-center shadow appearance-none border text-amber-50 border-amber-100 rounded py-2 leading-tight px-3 focus:outline-none focus:shadow-outline bg-gray-900'
                             >
                                 <option value=''>Selecione um status</option>
-                                {status.map((status) => (
-                                    <option value={status}>{status}</option>
+                                {status?.map((status, i) => (
+                                    <option key={i} value={status.idStatus}>{status.status}</option>
                                 ))}
                             </select>
                         </div>
@@ -185,7 +195,7 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
 
                             <div className='flex justify-center items-center mb-4'>
                                 {venda && venda.itensVenda && venda?.itensVenda.length > 0 ? (
-                                    <ProdutosList list produtos={produtos} onDeleteFromList={handleDeleteProduto} />
+                                    <ProdutosList list produtos={produtos} onDeleteFromList={handleDeleteProduto} onSelectItem={() => handleAddNewProduct} />
                                 ) : (<div>Sem produtos ou undefined!</div>)}
                             </div>
 
@@ -239,17 +249,25 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                         </button>
                     </div>
                     {selectProduto && (
-                        <div className='absolute gap-5 flex flex-col justify-center items-center w-full h-full rounded-2xl bg-gray-800/90 z-10'>
-                            <div className='flex justify-around items-center gap-5'>
+                        <div className='fixed top-0 gap-5 flex flex-col justify-center items-center min-w-full min-h-full rounded-2xl bg-gray-800/90 z-10'>
+                            <div className='flex justify-around items-center gap-5 pt-3'>
                                 <FaCubes size={28} className='text-amber-100' />
                                 <h3 className='text-amber-100 text-2xl'>Selecione o produto</h3>
                             </div>
-                            <div className='w-full min-h-2/3 flex justify-start items-center rounded-2xl bg-amber-100'>
+                            <div className='p-4 w-4/5 overflow-x-scroll flex justify-start items-center rounded-2xl bg-amber-100'>
                                 {todosProdutos && todosProdutos.length > 0 ? (
-                                    <ProdutosList selectItem produtos={todosProdutos.map(produto => ({ produto }))} />
-                                ) : (<div className='text-lg text-gray-900 text-center flex justify-center items-center'>
-                                    Nenhum produto encontrado!
-                                </div>)}
+                                    <ProdutosList
+                                        selectItem
+                                        produtos={todosProdutos
+                                            .filter(produto => produto.ativo && !produtos.some(p => p.produto.idProduto === produto.idProduto))
+                                            .map(produto => ({ produto }))}
+                                        onSelectItem={handleAddNewProduct}
+                                    />
+                                ) : (
+                                    <div className='text-lg w-full text-gray-900 text-center flex justify-center items-center'>
+                                        Nenhum produto encontrado!
+                                    </div>
+                                )}
                             </div>
                             <div onClick={() => setSelectProduto(!selectProduto)} className='cursor-pointer absolute px-1 p-0.5 rounded-sm bg-amber-100 top-3 right-3 animate-pulse'>
                                 <FaWindowClose size={28} className='text-gray-800' />

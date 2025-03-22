@@ -49,7 +49,7 @@ export const VendaCard: React.FC<VendaCardProps> = ({ venda, deleteProdutosBtn }
     }
 
     return (
-        <div className={`rounded-2xl w-72 min-h-72 bg-gray-800 flex flex-col justify-between items-center shadow-lg shadow-gray-700`}>
+        <div className={`rounded-2xl w-full mx-2 sm:mx-0 sm:w-96 min-h-72 bg-gray-800 flex flex-col justify-between items-center shadow-lg shadow-gray-700`}>
 
             <div className="w-full rounded-t-2xl flex h-12 justify-around items-center p-2 bg-amber-100">
                 <div className="h-full flex items-center justify-center">
@@ -65,7 +65,7 @@ export const VendaCard: React.FC<VendaCardProps> = ({ venda, deleteProdutosBtn }
                     <FaShoppingCart size={24} className="text-amber-100" />
                     <h3 className="text-xl font-thin text-amber-100">Produtos {`(${venda.itensVenda.length})`}</h3>
                 </div>
-                <div className={`flex ${venda.itensVenda.length > 1 ? 'justify-between' : 'justify-center'} text-center rounded-2xl p-2 w-64 min-h-14 bg-amber-100`}>
+                <div className={`flex ${venda.itensVenda.length > 1 ? 'justify-between' : 'justify-center'} text-center rounded-2xl p-2 w-full min-h-14 bg-amber-100`}>
                     <div className="flex justify-center items-center">
                         {produtos && (
                             venda.itensVenda[0] && venda.itensVenda.length > 0 ? (
@@ -113,8 +113,7 @@ export const VendaCard: React.FC<VendaCardProps> = ({ venda, deleteProdutosBtn }
                     <p className="text-md px-1 text-amber-100 font-thin">Data de criação</p>
                 </div>
                 <div className="min-h-7 w-36 flex-col justify-center items-center mt-2 p-1 rounded-2xl bg-amber-100 text-md font-extralight">
-                    <p>{new Date(venda.criadoEm).toLocaleDateString('pt-BR')}</p>
-                    <p>{new Date(venda.criadoEm).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>
+                    <p>{new Date(venda.criadoEm).toLocaleString('pt-BR', { timeZone: 'UTC', year: 'numeric', month: '2-digit', day: '2-digit' })}</p>
                 </div>
             </div>
             <div className="flex flex-col justify-center items-center text-center mt-4 w-full">

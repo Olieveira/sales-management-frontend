@@ -1,3 +1,4 @@
+import { FaExclamationTriangle } from "react-icons/fa";
 import { Produto } from "../services/produtoService";
 import { ProdutoCard, ProdutoListItem, SelectProdutoListItem } from "./Produto";
 
@@ -8,9 +9,10 @@ interface ProdutosListProps {
     list?: boolean;
     selectItem?: boolean;
     onDeleteFromList?: (id: number) => void;
+    onSelectItem?: (produto: Produto) => void;
 }
 
-const ProdutosList: React.FC<ProdutosListProps> = ({ produtos, card, list, selectItem, onDeleteFromList }) => {
+const ProdutosList: React.FC<ProdutosListProps> = ({ produtos, card, list, selectItem, onDeleteFromList, onSelectItem }) => {
 
     const renderProduto = (produto: Produto, quantidade?: number) => {
         if (produto) {
@@ -19,7 +21,8 @@ const ProdutosList: React.FC<ProdutosListProps> = ({ produtos, card, list, selec
             } else if (list) {
                 return <ProdutoListItem key={produto.idProduto} produto={produto} quantidade={quantidade} onDelete={onDeleteFromList} />;
             } else if (selectItem) {
-                return <SelectProdutoListItem key={produto.idProduto} produto={produto} />
+                console.log("Key (id) do produto renderizado: ", produto.idProduto)
+                return <SelectProdutoListItem key={produto.idProduto} produto={produto} onSelectItem={onSelectItem} />
             }
         } else {
             return <div>Produto undefined</div>
@@ -38,7 +41,10 @@ const ProdutosList: React.FC<ProdutosListProps> = ({ produtos, card, list, selec
         <div className={`flex flex-wrap gap-4 justify-center items-center w-full`}>
             {produtos.length > 0 ? produtos.map((produto) => {
                 return renderProduto(formatRender(produto), produto.quantidade);
-            }) : (<div>Nenhum produto registrado!</div>)}
+            }) : (<div className="w-full rounded-lg flex flex-col justify-center items-center bg-gray-800 p-2">
+                <FaExclamationTriangle size={24} className="text-red-200 animate-pulse" />
+                <p className="text-lg text-amber-100 p-2">Nenhum produto registrado!</p>
+            </div>)}
         </div>
     );
 };

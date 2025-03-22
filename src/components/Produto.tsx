@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Produto, inativarProduto, ativarProduto } from "../services/produtoService";
-import { FaCube, FaCommentDots, FaRulerCombined, FaShoppingBag, FaCalendar, FaCoins, FaCubes, FaBoxes, FaTrash } from "react-icons/fa";
+import { FaCommentDots, FaRulerCombined, FaShoppingBag, FaCalendar, FaCoins, FaCubes, FaBoxes, FaTrash, FaPlusCircle } from "react-icons/fa";
 
 interface ProdutoCardProps {
     produto: Produto;
@@ -11,14 +11,21 @@ const handleTrocarStatus = async (idProduto: number, produto: Produto) => {
     const confirmacao = window.confirm(`Tem certeza que deseja ${produto.ativo ? 'inativar' : 'ativar'} o produto ${produto.nome} ?`);
 
     if (confirmacao) {
-        const resultado = produto.ativo ? await inativarProduto(idProduto) : await ativarProduto(idProduto);
+        try {
 
-        if (resultado && resultado.success) {
-            alert(`Produto ${produto.nome} ${!produto.ativo ? 'ativado' : 'inativado'} com sucesso!`);
-            window.location.reload();
-        } else {
-            console.error(`Erro ao ${produto.ativo ? 'inativar' : 'ativar'} o produto: `, produto.nome);
-            alert(`Erro ao inativar o produto ${produto.nome}!\n${resultado.error || 'Erro desconhecido'}`);
+            const resultado = produto.ativo ? await inativarProduto(idProduto) : await ativarProduto(idProduto);
+
+            if (resultado && !resultado.error) {
+                alert(`Produto ${produto.nome} ${!produto.ativo ? 'ativado' : 'inativado'} com sucesso!`);
+                window.location.reload();
+            } else {
+                console.error(`Erro ao ${produto.ativo ? 'inativar' : 'ativar'} o produto: `, produto.nome);
+                alert(`Erro ao inativar o produto ${produto.nome}!\n${resultado.error || 'Erro desconhecido'}`);
+            }
+
+        } catch (e) {
+            console.log("Erro ao solicitar atualização do produto:\n", e)
+            window.alert("Houve um erro interno ao tentar atualizar o produto.")
         }
     }
 };
@@ -27,12 +34,13 @@ export const ProdutoCard: React.FC<ProdutoCardProps> = ({ produto }) => {
     return (
         <div className={`rounded-2xl w-72 min-h-72 ${!produto.ativo ? 'bg-rose-950' : 'bg-gray-800'} flex flex-col justify-between items-center shadow-lg shadow-gray-700`}>
 
-            <div className="w-full rounded-t-2xl flex h-12 justify-around items-center p-2 bg-amber-100">
-                <div className="h-full flex items-center justify-center">
-                    <FaCube size={24} className="text-gray-600" />
+            <div className="w-full rounded-t-2xl flex min-h-12 h-auto justify-between items-center p-2 bg-amber-100">
+                <div className="px-2">
+                    <h2 className="text-lg text-left font-semibold text-gray-600">{produto.nome}</h2>
                 </div>
-                <h2 className="text-lg text-center font-semibold text-gray-600 px-2 shrink leading-tight">{produto.nome}</h2>
-                <h3 className="text-lg text-center font-semibold text-gray-600">{produto.idProduto}</h3>
+                <div className="w-10 rounded-full bg-gray-800">
+                    <h3 className="text-lg text-center font-semibold text-amber-100">{produto.idProduto}</h3>
+                </div>
             </div>
 
             <div className="flex flex-row justify-center items-center gap-4 mt-4 p-1">
@@ -66,8 +74,7 @@ export const ProdutoCard: React.FC<ProdutoCardProps> = ({ produto }) => {
                     <FaCalendar size={24} className="text-amber-100" />
                     <p className="text-md px-1 text-white font-thin">Data de criação</p>
                     <div className="min-h-8 flex-col justify-center items-center mt-2 p-2 rounded-2xl bg-amber-100 text-md font-extralight">
-                        <p>{new Date(produto.criadoEm).toLocaleDateString('pt-BR')}</p>
-                        <p>{new Date(produto.criadoEm).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>
+                        <p>{new Date(produto.criadoEm).toLocaleString('pt-BR', { timeZone: 'UTC', year: 'numeric', month: '2-digit', day: '2-digit' })}</p>
                     </div>
                 </div>
                 <div className="w-1/2 flex flex-col justify-center items-center text-center">
@@ -100,7 +107,7 @@ interface ProdutoListItemProps {
 export const ProdutoListItem: React.FC<ProdutoListItemProps> = ({ produto, quantidade, onDelete }) => {
 
     return (
-        <div className={`relative flex justify-around rounded-2xl w-full gap-4 min-h-10 p-2 mx-2 ${!produto.ativo ? 'bg-rose-950' : 'bg-gray-800'} flex shadow-lg shadow-gray-700`}>
+        <div className={`relative flex justify-between rounded-2xl w-full gap-4 min-h-10 px-7 mx-2 ${!produto.ativo ? 'bg-rose-950' : 'bg-gray-800'} flex shadow-lg shadow-gray-700`}>
             <div className="flex justify-between items-center gap-x-2">
                 <FaCubes size={24} className="text-amber-100" />
                 <span className="text-amber-100 ml-2 text-base">{produto.nome}</span>
@@ -118,18 +125,24 @@ export const ProdutoListItem: React.FC<ProdutoListItemProps> = ({ produto, quant
     );
 };
 
-interface SelectProdutoListItem{
+interface SelectProdutoListItem {
     produto: Produto;
+    onSelectItem?: (produto: Produto) => void;
 }
 
-export const SelectProdutoListItem: React.FC<ProdutoListItemProps> = ({ produto }) => {
+export const SelectProdutoListItem: React.FC<SelectProdutoListItem> = ({ produto, onSelectItem }) => {
 
     return (
-        <div className={`cursor-pointer flex justify-around rounded-2xl gap-4 p-2 mx-2 min-w-48 ${!produto.ativo ? 'bg-rose-950' : 'bg-gray-800'} flex shadow-lg shadow-gray-700`}>
-            <div className="flex justify-between items-center gap-x-2">
+        <div className={`relative cursor-pointer flex justify-around rounded-2xl gap-4 p-2 mx-2 min-w-48 ${!produto.ativo ? 'bg-rose-950' : 'bg-gray-800'} flex shadow-lg shadow-gray-700`}>
+            <div className="flex justify-between items-center gap-x-2 mb-4">
                 <FaCubes size={24} className="text-amber-100" />
                 <span className="text-amber-100 ml-2 text-base">{produto.nome}</span>
             </div>
+            {produto && onSelectItem && (
+                <div className={`absolute flex justify-center items-center -bottom-3 rounded-full ${produto.ativo ? 'bg-gray-800' : 'bg-rose-950'} p-1 transition-all duration-200`}>
+                    <FaPlusCircle onClick={() => onSelectItem(produto)} size={24} className="text-amber-100" />
+                </div>
+            )}
         </div >
     );
 };

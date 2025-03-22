@@ -13,7 +13,6 @@ interface CreateFormProps {
 export const CreateForm: React.FC<CreateFormProps> = ({ id }) => {
 
     const [formProduto, setFormProduto] = useState<Produto>({} as Produto);
-    const [novoProduto, setNovoProduto] = useState<Produto>({} as Produto);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -27,6 +26,7 @@ export const CreateForm: React.FC<CreateFormProps> = ({ id }) => {
                         ...(prevProduto as Produto),
                         ativo: true,
                         criadoEm: new Date().toISOString().split('T')[0],
+                        inativoEm: new Date().toISOString().split('T')[0],
                     }));
                 }
             } catch (error) {
@@ -41,6 +41,7 @@ export const CreateForm: React.FC<CreateFormProps> = ({ id }) => {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
+
         setFormProduto((prevProduto) => ({
             ...(prevProduto as Produto),
             [name]: value,
@@ -64,11 +65,18 @@ export const CreateForm: React.FC<CreateFormProps> = ({ id }) => {
             return;
         }
 
-        const resultado = await createProduto(formProduto);
-        setNovoProduto(resultado);
+        const produtoAjustado = {
+            ...formProduto,
+            criadoEm: new Date(formProduto.criadoEm).toISOString().replace('T', ' '),
+            estoqueUn: Number(formProduto.estoqueUn),
+        };
 
-        if (resultado && resultado.success) {
-            alert(`Produto ${novoProduto.idProduto} - ${novoProduto.nome} criado com sucesso!`);
+        console.log("Produto ajustado antes da solicitação de criação:\n", produtoAjustado);
+
+        const resultado = await createProduto(produtoAjustado);
+
+        if (resultado && !resultado.error) {
+            alert(`Produto ${produtoAjustado.idProduto} - ${produtoAjustado.nome} criado com sucesso!`);
             navigate('/produtos');
             window.location.reload();
         } else {
@@ -205,7 +213,7 @@ export const CreateForm: React.FC<CreateFormProps> = ({ id }) => {
                                     type='date'
                                     id='inativoEm'
                                     name='inativoEm'
-                                    value={formProduto.inativoEm ? new Date(formProduto.inativoEm).toISOString().split('T')[0] : '-'}
+                                    value={formProduto.inativoEm ? new Date(formProduto.inativoEm).toISOString().split('T')[0] : new Date(Date.now()).toISOString().split('T')[0]}
                                     onChange={handleChange}
                                     className='shadow appearance-none border border-amber-100 rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline'
                                 />
