@@ -1,20 +1,20 @@
 import React from 'react';
 import Header from '../layouts/Header';
-import { FaCalendarAlt, FaClock, FaCommentDollar, FaCopy, FaCubes, FaDollarSign, FaPlusCircle, FaSave, FaTrash, FaTruckLoading, FaUser, FaWindowClose } from 'react-icons/fa';
+import { FaCalendarAlt, FaClock, FaCommentDollar, FaCopy, FaCubes, FaDollarSign, FaFileInvoiceDollar, FaPlusCircle, FaSave, FaTrash, FaTruckLoading, FaUser, FaWindowClose } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { getVenda, updateVenda, Venda, deleteVenda } from '../services/vendasService';
+import { useNavigate } from 'react-router-dom';
+import { getVenda, Venda, createVenda } from '../services/vendasService';
 import ProdutosList from '../components/ProdutosList';
 import { Produto } from '../services/produtoService';
 import { useProdutos } from '../hooks/useProdutos';
 import { useStatus } from '../hooks/useStatus';
 import { usePlataformas } from '../hooks/usePlataformas';
 
-interface EditFormProps {
+interface CreateFormProps {
     id?: Number;
 }
 
-export const EditForm: React.FC<EditFormProps> = ({ id }) => {
+export const NewVendaForm: React.FC<CreateFormProps> = ({ id }) => {
     const [venda, setVenda] = useState<Venda>({} as Venda);
     const [vendaOriginal, setVendaOriginal] = useState<Venda>({} as Venda);
     const [produtos, setProdutos] = useState<Array<{ produto: Produto, quantidade?: number }>>([])
@@ -29,19 +29,24 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
     useEffect(() => {
         const fetchVenda = async () => {
             try {
-                const vendaData = await getVenda(id as number);
-                if (vendaData) {
-                    setVenda(vendaData);
-                    setVendaOriginal(vendaData);
-                    setProdutos(vendaData.itensVenda.map((venda) => { return { produto: venda.produto, quantidade: venda.quantidade } }));
-                    setProdutosOriginal(vendaData.itensVenda.map((venda) => { return { produto: venda.produto, quantidade: venda.quantidade } }));
+                if (id !== undefined) {
+                    const vendaData = await getVenda(id as number);
+                    if (vendaData) {
+                        setVenda(vendaData);
+                        setVendaOriginal(vendaData);
+                        setProdutos(vendaData.itensVenda.map((venda) => { return { produto: venda.produto, quantidade: venda.quantidade } }));
+                        setProdutosOriginal(vendaData.itensVenda.map((venda) => { return { produto: venda.produto, quantidade: venda.quantidade } }));
+                    }
                 } else {
-                    console.error("Venda data is undefined or null");
+                    setVenda((prevVenda) => ({
+                        ...(prevVenda as Venda),
+                        criadoEm: new Date().toISOString().split('T')[0],
+                        total: 0,
+                    }));
                 }
             } catch (error) {
-                window.alert(`Erro ao buscar venda:`);
-                console.log("Erro ao buscar venda:\n", error)
-                // navigate("/vendas");
+                window.alert(`Erro ao buscar venda informada!`);
+                navigate("/vendas/new");
             }
         };
         fetchVenda();
@@ -49,36 +54,15 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
 
     const handleDeleteProduto = (idProduto: number) => {
         const newProdutos = produtos?.filter((produto) => produto.produto.idProduto !== idProduto);
-        console.log('Handle delete para o id ', idProduto, ' acionado!\nProduto antes do filter:\n', produtos, '\nProdutos depois do filter:\n', newProdutos)
         setProdutos(newProdutos);
     };
 
     const handleAddNewProduct = (produto: Produto) => {
         const quantidade = parseInt(prompt("Digite a quantidade do produto:", "1") || "0", 10);
         setProdutos([...produtos, { produto, quantidade }]);
-        console.log('UseState produtos pós adição do produto:\n', produtos)
         setSelectProduto(!selectProduto);
     };
 
-
-    const handleDelete = async () => {
-        if (window.confirm(`Tem certeza que deseja excluir a venda ${venda?.idVenda}?`)) {
-            try {
-                const resultado = await deleteVenda(Number(venda?.idVenda));
-                if (resultado.success) {
-                    alert(`Venda ${venda?.idVenda} excluída com sucesso!`);
-                    navigate('/vendas');
-                    window.location.reload();
-                } else {
-                    console.error('Erro ao excluir venda: ', venda?.idVenda);
-                    alert(`Erro ao excluir venda ${venda?.idVenda}!`);
-                }
-            } catch (error) {
-                console.error('Erro ao excluir venda');
-                alert(`Erro ao excluir venda ${venda?.idVenda}!`);
-            }
-        }
-    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -117,14 +101,14 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
             return;
         };
 
-        const resultado = await updateVenda(Number(venda?.idVenda), venda as Venda);
+        const resultado = await createVenda(venda as Venda);
         if (resultado && resultado.success) {
-            alert(`Venda ${venda?.idVenda} - ${venda?.nomeComprador} atualizado com sucesso!`);
+            alert(`Venda criada com sucesso!`);
             navigate('/vendas');
             window.location.reload();
         } else {
-            console.error('Erro ao atualizar venda: ', venda?.nomeComprador);
-            alert(`Erro ao atualizar venda ${venda?.nomeComprador}!\n${resultado.error || 'Erro desconhecido'}`);
+            console.error('Erro ao criar venda!');
+            alert(`Erro ao criar venda!\n${resultado.error || 'Erro desconhecido'}`);
         }
     };
 
@@ -135,15 +119,11 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                 <form onSubmit={handleSubmit} className='bg-gray-900 rounded shadow-2xl w-full max-w-lg shadow-gray-900 relative flex flex-col justify-center items-center'>
                     <div className='flex justify-between items-center w-full bg-gray-800 rounded rounded-b-2xl px-5 py-2 shadow-gray-900 shadow-md'>
 
-                        <div onClick={handleDelete} className='bg-red-200 flex justify-center items-center rounded-full p-2 w-10 h-10 hover:w-11 hover:h-11 transition-all linear cursor-pointer'>
-                            <FaTrash size={24} className='text-gray-900' />
-                        </div>
+                        <h2 className='text-2xl text-amber-100 font-semibold'>Nova Venda</h2>
 
-                        <h2 className='text-2xl text-amber-100 font-semibold'>{String(venda?.idVenda)}</h2>
-
-                        <Link to={`/vendas/new/${venda.idVenda}`} className='flex justify-center items-center rounded-full p-2 w-10 h-10 hover:w-11 hover:h-11 transition-all linear cursor-pointer  bg-red-200'>
-                            <FaCopy size={24} className='text-gray-900' />
-                        </Link>
+                        <span className='flex justify-center items-center rounded-full p-2 w-10 h-10 hover:w-11 hover:h-11 transition-all linear cursor-pointer  bg-red-200'>
+                            <FaFileInvoiceDollar size={24} className='text-gray-900' />
+                        </span>
 
                     </div>
                     <div className={`sm:mb-8 mb-4 flex flex-col justify-center items-center`}>
@@ -214,9 +194,7 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                             </div>
 
                             <div className='flex justify-center items-center mb-4'>
-                                {venda && venda.itensVenda && venda?.itensVenda.length > 0 ? (
-                                    <ProdutosList list produtos={produtos} onDeleteFromList={handleDeleteProduto} onSelectItem={() => handleAddNewProduct} />
-                                ) : (<div>Sem produtos ou undefined!</div>)}
+                                <ProdutosList list produtos={produtos} onDeleteFromList={handleDeleteProduto} onSelectItem={() => handleAddNewProduct} />
                             </div>
 
                             <div className='justify-center items-center animate-pulse ease-in-out duration-300'>
