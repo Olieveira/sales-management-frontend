@@ -4,15 +4,9 @@ import { Link } from 'react-router-dom';
 import { FaPlusSquare } from 'react-icons/fa';
 import { Loading } from '../components/Loading';
 import { VendasList } from '../components/VendasList';
-import { useEffect } from 'react';
 
 export const Vendas = () => {
     const { data: vendas, isLoading, error } = useVendas();
-
-    useEffect(() => {
-        console.log("Recebido venda na página vendas:\n", vendas)
-        console.log("Comprimento do array recebido: ", vendas?.length)
-    }, [vendas]);
 
     if (isLoading) return (
         <div>

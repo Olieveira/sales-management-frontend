@@ -1,6 +1,6 @@
 import React from 'react';
 import Header from '../layouts/Header';
-import { FaCalendarAlt, FaClock, FaCommentDollar, FaCopy, FaCubes, FaDollarSign, FaFileInvoiceDollar, FaPlusCircle, FaSave, FaTrash, FaTruckLoading, FaUser, FaWindowClose } from 'react-icons/fa';
+import { FaCalendarAlt, FaClock, FaCommentDollar, FaCubes, FaDollarSign, FaFileInvoiceDollar, FaPlusCircle, FaSave, FaTruckLoading, FaUser, FaWindowClose } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getVenda, Venda, createVenda } from '../services/vendasService';
@@ -9,6 +9,7 @@ import { Produto } from '../services/produtoService';
 import { useProdutos } from '../hooks/useProdutos';
 import { useStatus } from '../hooks/useStatus';
 import { usePlataformas } from '../hooks/usePlataformas';
+import { createItensVenda, ItemVenda } from '../services/itensVendaService';
 
 interface CreateFormProps {
     id?: Number;
@@ -18,7 +19,6 @@ export const NewVendaForm: React.FC<CreateFormProps> = ({ id }) => {
     const [venda, setVenda] = useState<Venda>({} as Venda);
     const [vendaOriginal, setVendaOriginal] = useState<Venda>({} as Venda);
     const [produtos, setProdutos] = useState<Array<{ produto: Produto, quantidade?: number }>>([])
-    const [produtosOriginal, setProdutosOriginal] = useState<Array<{ produto: Produto, quantidade?: number }>>([])
     const [selectProduto, setSelectProduto] = useState(false);
     const { data: todosProdutos } = useProdutos();
     const { data: status } = useStatus();
@@ -35,7 +35,6 @@ export const NewVendaForm: React.FC<CreateFormProps> = ({ id }) => {
                         setVenda(vendaData);
                         setVendaOriginal(vendaData);
                         setProdutos(vendaData.itensVenda.map((venda) => { return { produto: venda.produto, quantidade: venda.quantidade } }));
-                        setProdutosOriginal(vendaData.itensVenda.map((venda) => { return { produto: venda.produto, quantidade: venda.quantidade } }));
                     }
                 } else {
                     setVenda((prevVenda) => ({
@@ -62,7 +61,6 @@ export const NewVendaForm: React.FC<CreateFormProps> = ({ id }) => {
         setProdutos([...produtos, { produto, quantidade }]);
         setSelectProduto(!selectProduto);
     };
-
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -94,21 +92,50 @@ export const NewVendaForm: React.FC<CreateFormProps> = ({ id }) => {
         };
     };
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
 
-        if (vendaOriginal === venda) {
-            alert('Nenhuma alteração realizada!');
-            return;
-        };
+        if (id !== undefined && JSON.stringify(vendaOriginal) === JSON.stringify(venda)) {
+            const confirm = window.confirm('Nenhuma alteração realizada, duplicar venda mesmo assim?');
+            if (!confirm) return;
+        }
 
-        const resultado = await createVenda(venda as Venda);
-        if (resultado && resultado.success) {
-            alert(`Venda criada com sucesso!`);
-            navigate('/vendas');
-            window.location.reload();
-        } else {
-            console.error('Erro ao criar venda!');
-            alert(`Erro ao criar venda!\n${resultado.error || 'Erro desconhecido'}`);
+        try {
+            const vendaResponse = await createVenda({
+                nomeComprador: venda.nomeComprador,
+                idPlataforma: venda.idPlataforma,
+                idStatus: venda.idStatus,
+                total: venda.total,
+                criadoEm: venda.criadoEm
+            } as Venda);
+
+            const itensVendaPromises = produtos.map((produto) =>
+                createItensVenda({
+                    idVenda: vendaResponse.idVenda,
+                    idProduto: produto.produto.idProduto,
+                    quantidade: produto.quantidade,
+                    unidade: produto.produto.unidade,
+                } as ItemVenda)
+            );
+
+            const itensVendaResponses = await Promise.all(itensVendaPromises);
+
+            const itensVendaError = itensVendaResponses.some(response => response.error);
+            if (itensVendaError) {
+                throw new Error('Erro ao criar itens da venda!');
+            }
+
+            if (vendaResponse && !itensVendaError) {
+                alert('Venda criada com sucesso!');
+                navigate('/vendas');
+            } else {
+                console.error('Erro ao criar venda ou registro dos itens!');
+                alert(`Erro ao criar venda ou registro dos itens!\n${vendaResponse.error || 'Erro desconhecido'}`);
+            }
+
+        } catch (error: any) {
+            console.error('Erro ao criar venda ou registro dos itens:', error);
+            alert(`Erro ao criar venda ou registro dos itens!\n${error.message || 'Erro desconhecido'}`);
         }
     };
 
@@ -215,6 +242,7 @@ export const NewVendaForm: React.FC<CreateFormProps> = ({ id }) => {
                             type='number'
                             id='total'
                             name='total'
+                            step='0.01'
                             value={venda?.total}
                             onChange={handleChange}
                             className='max-w-36 text-center shadow appearance-none border border-amber-100 rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline'

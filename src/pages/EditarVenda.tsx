@@ -9,6 +9,7 @@ import { Produto } from '../services/produtoService';
 import { useProdutos } from '../hooks/useProdutos';
 import { useStatus } from '../hooks/useStatus';
 import { usePlataformas } from '../hooks/usePlataformas';
+import { createItensVenda, deleteItensVenda, ItemVenda, updateItensVenda } from '../services/itensVendaService';
 
 interface EditFormProps {
     id?: Number;
@@ -41,7 +42,7 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
             } catch (error) {
                 window.alert(`Erro ao buscar venda:`);
                 console.log("Erro ao buscar venda:\n", error)
-                // navigate("/vendas");
+                navigate("/vendas");
             }
         };
         fetchVenda();
@@ -49,14 +50,12 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
 
     const handleDeleteProduto = (idProduto: number) => {
         const newProdutos = produtos?.filter((produto) => produto.produto.idProduto !== idProduto);
-        console.log('Handle delete para o id ', idProduto, ' acionado!\nProduto antes do filter:\n', produtos, '\nProdutos depois do filter:\n', newProdutos)
         setProdutos(newProdutos);
     };
 
     const handleAddNewProduct = (produto: Produto) => {
         const quantidade = parseInt(prompt("Digite a quantidade do produto:", "1") || "0", 10);
         setProdutos([...produtos, { produto, quantidade }]);
-        console.log('UseState produtos pós adição do produto:\n', produtos)
         setSelectProduto(!selectProduto);
     };
 
@@ -110,21 +109,84 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
         };
     };
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
 
-        if (vendaOriginal === venda) {
+        if (JSON.stringify(vendaOriginal) === JSON.stringify(venda) && JSON.stringify(produtosOriginal) === JSON.stringify(produtos)) {
             alert('Nenhuma alteração realizada!');
             return;
         };
 
-        const resultado = await updateVenda(Number(venda?.idVenda), venda as Venda);
-        if (resultado && resultado.success) {
-            alert(`Venda ${venda?.idVenda} - ${venda?.nomeComprador} atualizado com sucesso!`);
+        console.log("Venda antes do update:\n", venda);
+
+        const resultadoVenda = await updateVenda(Number(venda?.idVenda), {
+            idVenda: venda.idVenda,
+            nomeComprador: venda.nomeComprador,
+            idPlataforma: venda.idPlataforma,
+            idStatus: venda.idStatus,
+            total: venda.total,
+            criadoEm: venda.criadoEm
+        } as Venda);
+
+        if (produtos !== produtosOriginal) {
+            const itensToDelete = produtosOriginal.filter((cadastrado) => {
+                const itemProcurado = produtos.find((atual) =>
+                    cadastrado.produto.idProduto == atual.produto.idProduto
+                );
+                return !itemProcurado ? cadastrado : null;
+            });
+
+            for (const item of itensToDelete) {
+                try {
+                    console.log("Excluindo item:\n", item);
+                    await deleteItensVenda(venda.idVenda, item.produto.idProduto);
+                } catch (error) {
+                    console.error(`Erro ao excluir item ${item.produto.idProduto}:`, error);
+                }
+            }
+
+            for (const produto of produtos) {
+                const produtoBuscado = produtosOriginal.find((produtoOrig) =>
+                    produtoOrig.produto.idProduto === produto.produto.idProduto
+                );
+
+                if (produtoBuscado) {
+                    if (produtoBuscado.quantidade !== produto.quantidade) {
+                        try {
+                            console.log("Atualizando produto:\n", produtoBuscado);
+                            await updateItensVenda({
+                                idProduto: produto.produto.idProduto,
+                                idVenda: venda.idVenda,
+                                quantidade: produto.quantidade,
+                                unidade: produto.produto.unidade
+                            } as ItemVenda);
+                        } catch (error) {
+                            console.error(`Erro ao atualizar item ${produto.produto.idProduto}:`, error);
+                        }
+                    }
+                } else {
+                    try {
+                        console.log("Criando produto:\n", produto);
+                        await createItensVenda({
+                            idProduto: produto.produto.idProduto,
+                            idVenda: venda.idVenda,
+                            quantidade: produto.quantidade,
+                            unidade: produto.produto.unidade
+                        } as ItemVenda);
+                    } catch (error) {
+                        console.error(`Erro ao criar item ${produto.produto.idProduto}:`, error);
+                    }
+                }
+            }
+        }
+
+        if (resultadoVenda) {
+            alert(`Venda ${venda?.idVenda} - ${venda?.nomeComprador ? venda.nomeComprador : ''} atualizado com sucesso!`);
             navigate('/vendas');
             window.location.reload();
         } else {
-            console.error('Erro ao atualizar venda: ', venda?.nomeComprador);
-            alert(`Erro ao atualizar venda ${venda?.nomeComprador}!\n${resultado.error || 'Erro desconhecido'}`);
+            console.error(`Erro ao atualizar venda ${venda}`);
+            alert(`Erro ao atualizar venda ${venda?.idVenda}!\n${resultadoVenda.error || 'Erro desconhecido'}`);
         }
     };
 
@@ -237,6 +299,7 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                             type='number'
                             id='total'
                             name='total'
+                            step='0.01'
                             value={venda?.total}
                             onChange={handleChange}
                             className='max-w-36 text-center shadow appearance-none border border-amber-100 rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline'
