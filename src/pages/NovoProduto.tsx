@@ -51,17 +51,12 @@ export const CreateForm: React.FC<CreateFormProps> = ({ id }) => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        {/** Validação dos campos */ }
         if (!formProduto.nome) {
             alert('O campo nome é obrigatório!');
             return;
         }
         if (formProduto.ativo === undefined) {
             alert('O campo status é obrigatório!');
-            return;
-        }
-        if (formProduto.inativoEm && formProduto.ativo) {
-            alert('O produto deve ser inativado para alterar a data de inativação!');
             return;
         }
 
@@ -136,6 +131,7 @@ export const CreateForm: React.FC<CreateFormProps> = ({ id }) => {
                                     type='number'
                                     id='preco'
                                     name='preco'
+                                    step='0.01'
                                     value={formProduto.preco}
                                     onChange={handleChange}
                                     className='shadow appearance-none border border-amber-100 rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline'

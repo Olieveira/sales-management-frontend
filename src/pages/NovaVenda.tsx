@@ -1,25 +1,24 @@
 import React from 'react';
 import Header from '../layouts/Header';
-import { FaCalendarAlt, FaClock, FaCommentDollar, FaCopy, FaCubes, FaDollarSign, FaPlusCircle, FaSave, FaTrash, FaTruckLoading, FaUser, FaWindowClose } from 'react-icons/fa';
+import { FaCalendarAlt, FaClock, FaCommentDollar, FaCubes, FaDollarSign, FaFileInvoiceDollar, FaPlusCircle, FaSave, FaTruckLoading, FaUser, FaWindowClose } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { getVenda, updateVenda, Venda, deleteVenda } from '../services/vendasService';
+import { useNavigate } from 'react-router-dom';
+import { getVenda, Venda, createVenda } from '../services/vendasService';
 import ProdutosList from '../components/ProdutosList';
 import { Produto } from '../services/produtoService';
 import { useProdutos } from '../hooks/useProdutos';
 import { useStatus } from '../hooks/useStatus';
 import { usePlataformas } from '../hooks/usePlataformas';
-import { createItensVenda, deleteItensVenda, ItemVenda, updateItensVenda } from '../services/itensVendaService';
+import { createItensVenda, ItemVenda } from '../services/itensVendaService';
 
-interface EditFormProps {
+interface CreateFormProps {
     id?: Number;
 }
 
-export const EditForm: React.FC<EditFormProps> = ({ id }) => {
+export const NewVendaForm: React.FC<CreateFormProps> = ({ id }) => {
     const [venda, setVenda] = useState<Venda>({} as Venda);
     const [vendaOriginal, setVendaOriginal] = useState<Venda>({} as Venda);
     const [produtos, setProdutos] = useState<Array<{ produto: Produto, quantidade?: number }>>([])
-    const [produtosOriginal, setProdutosOriginal] = useState<Array<{ produto: Produto, quantidade?: number }>>([])
     const [selectProduto, setSelectProduto] = useState(false);
     const { data: todosProdutos } = useProdutos();
     const { data: status } = useStatus();
@@ -30,19 +29,23 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
     useEffect(() => {
         const fetchVenda = async () => {
             try {
-                const vendaData = await getVenda(id as number);
-                if (vendaData) {
-                    setVenda(vendaData);
-                    setVendaOriginal(vendaData);
-                    setProdutos(vendaData.itensVenda.map((venda) => { return { produto: venda.produto, quantidade: venda.quantidade } }));
-                    setProdutosOriginal(vendaData.itensVenda.map((venda) => { return { produto: venda.produto, quantidade: venda.quantidade } }));
+                if (id !== undefined) {
+                    const vendaData = await getVenda(id as number);
+                    if (vendaData) {
+                        setVenda(vendaData);
+                        setVendaOriginal(vendaData);
+                        setProdutos(vendaData.itensVenda.map((venda) => { return { produto: venda.produto, quantidade: venda.quantidade } }));
+                    }
                 } else {
-                    console.error("Venda data is undefined or null");
+                    setVenda((prevVenda) => ({
+                        ...(prevVenda as Venda),
+                        criadoEm: new Date().toISOString().split('T')[0],
+                        total: 0,
+                    }));
                 }
             } catch (error) {
-                window.alert(`Erro ao buscar venda:`);
-                console.log("Erro ao buscar venda:\n", error)
-                navigate("/vendas");
+                window.alert(`Erro ao buscar venda informada!`);
+                navigate("/vendas/new");
             }
         };
         fetchVenda();
@@ -57,26 +60,6 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
         const quantidade = parseInt(prompt("Digite a quantidade do produto:", "1") || "0", 10);
         setProdutos([...produtos, { produto, quantidade }]);
         setSelectProduto(!selectProduto);
-    };
-
-
-    const handleDelete = async () => {
-        if (window.confirm(`Tem certeza que deseja excluir a venda ${venda?.idVenda}?`)) {
-            try {
-                const resultado = await deleteVenda(Number(venda?.idVenda));
-                if (resultado.success) {
-                    alert(`Venda ${venda?.idVenda} excluída com sucesso!`);
-                    navigate('/vendas');
-                    window.location.reload();
-                } else {
-                    console.error('Erro ao excluir venda: ', venda?.idVenda);
-                    alert(`Erro ao excluir venda ${venda?.idVenda}!`);
-                }
-            } catch (error) {
-                console.error('Erro ao excluir venda');
-                alert(`Erro ao excluir venda ${venda?.idVenda}!`);
-            }
-        }
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -112,81 +95,47 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if (JSON.stringify(vendaOriginal) === JSON.stringify(venda) && JSON.stringify(produtosOriginal) === JSON.stringify(produtos)) {
-            alert('Nenhuma alteração realizada!');
-            return;
-        };
-
-        console.log("Venda antes do update:\n", venda);
-
-        const resultadoVenda = await updateVenda(Number(venda?.idVenda), {
-            idVenda: venda.idVenda,
-            nomeComprador: venda.nomeComprador,
-            idPlataforma: venda.idPlataforma,
-            idStatus: venda.idStatus,
-            total: venda.total,
-            criadoEm: venda.criadoEm
-        } as Venda);
-
-        if (produtos !== produtosOriginal) {
-            const itensToDelete = produtosOriginal.filter((cadastrado) => {
-                const itemProcurado = produtos.find((atual) =>
-                    cadastrado.produto.idProduto == atual.produto.idProduto
-                );
-                return !itemProcurado ? cadastrado : null;
-            });
-
-            for (const item of itensToDelete) {
-                try {
-                    console.log("Excluindo item:\n", item);
-                    await deleteItensVenda(venda.idVenda, item.produto.idProduto);
-                } catch (error) {
-                    console.error(`Erro ao excluir item ${item.produto.idProduto}:`, error);
-                }
-            }
-
-            for (const produto of produtos) {
-                const produtoBuscado = produtosOriginal.find((produtoOrig) =>
-                    produtoOrig.produto.idProduto === produto.produto.idProduto
-                );
-
-                if (produtoBuscado) {
-                    if (produtoBuscado.quantidade !== produto.quantidade) {
-                        try {
-                            console.log("Atualizando produto:\n", produtoBuscado);
-                            await updateItensVenda({
-                                idProduto: produto.produto.idProduto,
-                                idVenda: venda.idVenda,
-                                quantidade: produto.quantidade,
-                                unidade: produto.produto.unidade
-                            } as ItemVenda);
-                        } catch (error) {
-                            console.error(`Erro ao atualizar item ${produto.produto.idProduto}:`, error);
-                        }
-                    }
-                } else {
-                    try {
-                        console.log("Criando produto:\n", produto);
-                        await createItensVenda({
-                            idProduto: produto.produto.idProduto,
-                            idVenda: venda.idVenda,
-                            quantidade: produto.quantidade,
-                            unidade: produto.produto.unidade
-                        } as ItemVenda);
-                    } catch (error) {
-                        console.error(`Erro ao criar item ${produto.produto.idProduto}:`, error);
-                    }
-                }
-            }
+        if (id !== undefined && JSON.stringify(vendaOriginal) === JSON.stringify(venda)) {
+            const confirm = window.confirm('Nenhuma alteração realizada, duplicar venda mesmo assim?');
+            if (!confirm) return;
         }
 
-        if (resultadoVenda) {
-            alert(`Venda ${venda?.idVenda} - ${venda?.nomeComprador ? venda.nomeComprador : ''} atualizado com sucesso!`);
-            navigate('/vendas');
-            window.location.reload();
-        } else {
-            console.error(`Erro ao atualizar venda ${venda}`);
-            alert(`Erro ao atualizar venda ${venda?.idVenda}!\n${resultadoVenda.error || 'Erro desconhecido'}`);
+        try {
+            const vendaResponse = await createVenda({
+                nomeComprador: venda.nomeComprador,
+                idPlataforma: venda.idPlataforma,
+                idStatus: venda.idStatus,
+                total: venda.total,
+                criadoEm: venda.criadoEm
+            } as Venda);
+
+            const itensVendaPromises = produtos.map((produto) =>
+                createItensVenda({
+                    idVenda: vendaResponse.idVenda,
+                    idProduto: produto.produto.idProduto,
+                    quantidade: produto.quantidade,
+                    unidade: produto.produto.unidade,
+                } as ItemVenda)
+            );
+
+            const itensVendaResponses = await Promise.all(itensVendaPromises);
+
+            const itensVendaError = itensVendaResponses.some(response => response.error);
+            if (itensVendaError) {
+                throw new Error('Erro ao criar itens da venda!');
+            }
+
+            if (vendaResponse && !itensVendaError) {
+                alert('Venda criada com sucesso!');
+                navigate('/vendas');
+            } else {
+                console.error('Erro ao criar venda ou registro dos itens!');
+                alert(`Erro ao criar venda ou registro dos itens!\n${vendaResponse.error || 'Erro desconhecido'}`);
+            }
+
+        } catch (error: any) {
+            console.error('Erro ao criar venda ou registro dos itens:', error);
+            alert(`Erro ao criar venda ou registro dos itens!\n${error.message || 'Erro desconhecido'}`);
         }
     };
 
@@ -197,15 +146,11 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                 <form onSubmit={handleSubmit} className='bg-gray-900 rounded shadow-2xl w-full max-w-lg shadow-gray-900 relative flex flex-col justify-center items-center'>
                     <div className='flex justify-between items-center w-full bg-gray-800 rounded rounded-b-2xl px-5 py-2 shadow-gray-900 shadow-md'>
 
-                        <div onClick={handleDelete} className='bg-red-200 flex justify-center items-center rounded-full p-2 w-10 h-10 hover:w-11 hover:h-11 transition-all linear cursor-pointer'>
-                            <FaTrash size={24} className='text-gray-900' />
-                        </div>
+                        <h2 className='text-2xl text-amber-100 font-semibold'>Nova Venda</h2>
 
-                        <h2 className='text-2xl text-amber-100 font-semibold'>{String(venda?.idVenda)}</h2>
-
-                        <Link to={`/vendas/new/${venda.idVenda}`} className='flex justify-center items-center rounded-full p-2 w-10 h-10 hover:w-11 hover:h-11 transition-all linear cursor-pointer  bg-red-200'>
-                            <FaCopy size={24} className='text-gray-900' />
-                        </Link>
+                        <span className='flex justify-center items-center rounded-full p-2 w-10 h-10 hover:w-11 hover:h-11 transition-all linear cursor-pointer  bg-red-200'>
+                            <FaFileInvoiceDollar size={24} className='text-gray-900' />
+                        </span>
 
                     </div>
                     <div className={`sm:mb-8 mb-4 flex flex-col justify-center items-center`}>
@@ -276,9 +221,7 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                             </div>
 
                             <div className='flex justify-center items-center mb-4'>
-                                {venda && venda.itensVenda && venda?.itensVenda.length > 0 ? (
-                                    <ProdutosList list produtos={produtos} onDeleteFromList={handleDeleteProduto} onSelectItem={() => handleAddNewProduct} />
-                                ) : (<div>Sem produtos ou undefined!</div>)}
+                                <ProdutosList list produtos={produtos} onDeleteFromList={handleDeleteProduto} onSelectItem={() => handleAddNewProduct} />
                             </div>
 
                             <div className='justify-center items-center animate-pulse ease-in-out duration-300'>

@@ -43,7 +43,7 @@ export const updateVenda = async (idVenda: number, venda: Partial<Omit<Venda, 'i
     return response.data;
 };
 
-export const createVenda = async (venda: Omit<Venda, 'id' | 'criadoEm'>) => {
-    const response = await api.post('/venda', venda);
+export const createVenda = async (venda: Omit<Venda, 'idVenda' | 'criadoEm'>) => {
+    const response = await api.post('/vendas', venda);
     return response.data;
 }

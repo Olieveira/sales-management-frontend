@@ -116,6 +116,7 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                                     type='number'
                                     id='preco'
                                     name='preco'
+                                    step='0.01'
                                     value={produto?.preco}
                                     onChange={handleChange}
                                     className='shadow appearance-none border border-amber-100 rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline'
