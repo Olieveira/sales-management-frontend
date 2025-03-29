@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import { CreateForm } from "./pages/NovoProduto";
 import { Vendas } from "./pages/Vendas";
 import { NewVendaForm } from "./pages/NovaVenda";
+import { Estoque } from "./pages/Estoque";
 
 const ProdutoWrapper = () => {
     const { id } = useParams<{ id: string }>();
@@ -38,6 +39,7 @@ export const AppRoutes = () => {
                 <Route path="/vendas/edit/:id" element={<VendaWrapper />} />
                 <Route path="/vendas/new" element={<NewVendaForm />} />
                 <Route path="/vendas/new/:id" element={<NewVendaWrapper />} />
+                <Route path="/estoque" element={<Estoque />} />
                 <Route path="*" element={<Home />} />
             </Routes>
         </BrowserRouter>

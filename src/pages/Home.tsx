@@ -13,7 +13,7 @@ export const Home = () => {
                     <h2 className='font-bold text-gray-700 text-lg'>Vendas</h2>
                 </Link>
 
-                <Link to="/" className="shadow-2xl shadow-gray-600 transition-all duration-100 cursor-pointer hover:rounded-4xl hover:w-36 hover:h-36 w-32 h-32 rounded-2xl border-4 border-green-200 bg-green-300 flex justify-center items-center">
+                <Link to="/estoque" className="shadow-2xl shadow-gray-600 transition-all duration-100 cursor-pointer hover:rounded-4xl hover:w-36 hover:h-36 w-32 h-32 rounded-2xl border-4 border-green-200 bg-green-300 flex justify-center items-center">
                     <h2 className='font-bold text-gray-700 text-lg'>Estoque</h2>
                 </Link>
 
