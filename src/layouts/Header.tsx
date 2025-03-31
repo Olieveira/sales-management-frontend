@@ -1,17 +1,20 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { FaHome, FaShoppingCart, FaWarehouse, FaBoxes } from 'react-icons/fa';
 
 interface MenuItem {
   label: string;
   path: string;
+  icon: React.ReactNode;
 }
 
 const Header: React.FC = () => {
 
   const menuItems: MenuItem[] = [
-    { label: 'Home', path: '/' },
-    { label: 'Produtos', path: '/produtos' },
-    { label: 'Vendas', path: '/vendas' },
+    { label: 'Home', path: '/', icon: <FaHome /> },
+    { label: 'Produtos', path: '/produtos', icon: <FaBoxes /> },
+    { label: 'Vendas', path: '/vendas', icon: <FaShoppingCart /> },
+    { label: 'Estoque', path: '/estoque', icon: <FaWarehouse /> },
   ];
 
   return (
@@ -28,9 +31,10 @@ const Header: React.FC = () => {
               <li key={item.label}>
                 <Link
                   to={item.path}
-                  className="hover:text-gray-400 transition-colors"
+                  className="hover:text-gray-400 transition-colors flex items-center"
                 >
-                  {item.label}
+                  <span className="hidden sm:inline">{item.label}</span>
+                  <span className="sm:hidden text-xl">{item.icon}</span>
                 </Link>
               </li>
             ))}

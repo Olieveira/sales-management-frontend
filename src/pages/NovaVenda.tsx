@@ -27,6 +27,10 @@ export const NewVendaForm: React.FC<CreateFormProps> = ({ id }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        console.log("Venda alterada:\n", venda);
+    }, [venda])
+
+    useEffect(() => {
         const fetchVenda = async () => {
             try {
                 if (id !== undefined) {
@@ -39,6 +43,9 @@ export const NewVendaForm: React.FC<CreateFormProps> = ({ id }) => {
                 } else {
                     setVenda((prevVenda) => ({
                         ...(prevVenda as Venda),
+                        idPlataforma: plataformas?.[0]?.idPlataforma || 1,
+                        plataforma: plataformas?.[0]?.nome || 'Shopee',
+                        idStatus: 1,
                         criadoEm: new Date().toISOString().split('T')[0],
                         total: 0,
                     }));
@@ -95,6 +102,13 @@ export const NewVendaForm: React.FC<CreateFormProps> = ({ id }) => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
+        console.log("Venda recebida do form para criação:\n", venda)
+
+        if (venda.itensVenda?.length <= 0 || !venda.nomeComprador || !venda.total || !venda.criadoEm) {
+            alert("Preencha todos os campos e adicione pelo menos um produto!");
+            return;
+        }
+
         if (id !== undefined && JSON.stringify(vendaOriginal) === JSON.stringify(venda)) {
             const confirm = window.confirm('Nenhuma alteração realizada, duplicar venda mesmo assim?');
             if (!confirm) return;
@@ -108,6 +122,8 @@ export const NewVendaForm: React.FC<CreateFormProps> = ({ id }) => {
                 total: venda.total,
                 criadoEm: venda.criadoEm
             } as Venda);
+
+            console.log("Venda response no Criar Venda:\n", vendaResponse)
 
             const itensVendaPromises = produtos.map((produto) =>
                 createItensVenda({
@@ -262,7 +278,7 @@ export const NewVendaForm: React.FC<CreateFormProps> = ({ id }) => {
                             name='criadoEm'
                             value={venda?.criadoEm ? new Date(venda.criadoEm).toISOString().split('T')[0] : '-'}
                             onChange={handleChange}
-                            className='text-center w-3xs shadow appearance-none border border-amber-100 rounded py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline'
+                            className='text-center w-3xs shadow appearance-none border border-amber-100 rounded py-2 px-3 text-white flex justify-center items-center leading-tight focus:outline-none focus:shadow-outline'
                         />
                     </div>
 

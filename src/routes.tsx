@@ -17,14 +17,18 @@ const VendaWrapper = () => {
     const { id } = useParams<{ id: string }>();
     return <EditVenda id={Number(id)} />;
 };
-const CreateFormWrapper = () => {
-    const { id } = useParams<{ id: string }>();
-    return <CreateForm id={Number(id)} />;
-};
 const NewVendaWrapper = () => {
     const { id } = useParams<{ id: string }>();
     return <NewVendaForm id={Number(id)} />;
 }
+const CreateFormWrapper = () => {
+    const { id } = useParams<{ id: string }>();
+    return <CreateForm id={Number(id)} />;
+};
+const EstoqueDuplicateWrapper = () => {
+    const { id } = useParams<{ id: string }>();
+    return <Estoque id={Number(id)} />
+};
 
 export const AppRoutes = () => {
     return (
@@ -40,6 +44,8 @@ export const AppRoutes = () => {
                 <Route path="/vendas/new" element={<NewVendaForm />} />
                 <Route path="/vendas/new/:id" element={<NewVendaWrapper />} />
                 <Route path="/estoque" element={<Estoque />} />
+                <Route path="/estoque/new" element={<Estoque id={0} />} />
+                <Route path="/estoque/new/:id" element={<EstoqueDuplicateWrapper />} />
                 <Route path="*" element={<Home />} />
             </Routes>
         </BrowserRouter>

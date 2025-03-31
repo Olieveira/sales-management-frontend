@@ -4,9 +4,18 @@ import { Link } from 'react-router-dom';
 import { FaPlusSquare } from 'react-icons/fa';
 import { Loading } from '../components/Loading';
 import { EstoqueList } from '../components/EstoqueList';
+import { useEffect } from 'react';
 
-export const Estoque = () => {
+interface EstoqueProps {
+    id?: number
+}
+
+export const Estoque: React.FC<EstoqueProps> = ({ id }) => {
     const { data: estoque, isLoading, error } = useEstoque();
+
+    useEffect(() => {
+        console.log('Estoque alterado na pagina estoque:\n', estoque)
+    }, [estoque])
 
     if (isLoading) return (
         <div>
@@ -37,7 +46,7 @@ export const Estoque = () => {
                         </div>
                     </div>
                     {estoque && estoque.length > 0 && (
-                        <EstoqueList estoque={estoque} />
+                        <EstoqueList estoque={estoque} id={id} />
                     )}
                 </div>
             </div>

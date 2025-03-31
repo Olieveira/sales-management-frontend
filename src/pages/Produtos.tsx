@@ -32,7 +32,7 @@ export const Produtos = () => {
                             </Link>
                         </div>
                         <div className='grow text-center'>
-                            <h2 className='text-3xl font-bold mt-4 mb-4 text-amber-100'>Lista de Produtos</h2>
+                            <h2 className='text-3xl font-bold mt-4 mb-4 text-amber-100'>Produtos</h2>
                         </div>
                     </div>
                     {produtos && produtos.length > 0 ? (
