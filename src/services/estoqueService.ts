@@ -23,3 +23,13 @@ export const getEstoqueById = async (id: number): Promise<Estoque> => {
     const response = await api.get(`/estoque/${id}`);
     return response.data;
 }
+
+export const updateEstoque = async (id: number, estoque: Partial<Omit<Estoque, 'idMaterial'>>) => {
+    const response = await api.put(`/estoque/${id}`, estoque)
+    return response.data;
+}
+
+export const createEstoque = async (estoque: Omit<Estoque, 'idMaterial'>) => {
+    const response = await api.post('/estoque', estoque);
+    return response.data;
+}

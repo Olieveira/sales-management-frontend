@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Estoque, getEstoqueById } from '../services/estoqueService';
+import { createEstoque, Estoque, getEstoqueById, updateEstoque } from '../services/estoqueService';
 import { useFornecedor } from '../hooks/useFornecedor';
-import { FaClone, FaEdit, FaEye, FaTrash } from 'react-icons/fa';
+import { FaClone, FaEdit, FaEye, FaPlusSquare, FaTrash, FaWindowClose } from 'react-icons/fa';
 import { Fornecedor } from '../services/fornecedorService';
 import { useNavigate } from 'react-router-dom';
 
@@ -11,7 +11,9 @@ interface EstoqueListProps {
 }
 
 export const EstoqueList: React.FC<EstoqueListProps> = ({ estoque, id }) => {
+    const [selectedOrigItem, setSelectedOrigItem] = useState<Estoque | null>(null);
     const [selectedItem, setSelectedItem] = useState<Estoque | null>(null);
+    const [selectedItemMode, setSelectedItemMode] = useState<string>('edit');
     const { data: fornecedores } = useFornecedor();
 
     const navigate = useNavigate();
@@ -21,12 +23,10 @@ export const EstoqueList: React.FC<EstoqueListProps> = ({ estoque, id }) => {
     }, [selectedItem])
 
     useEffect(() => {
-        console.log("id recebido:\n", id);
         if (id !== undefined) {
-            console.log("1");
             // novo material
             if (id === 0) {
-                console.log("2");
+                setSelectedItemMode("create");
                 const fornecedor = { nome: "", contato: "", link: "" } as Fornecedor
                 setSelectedItem({
                     nome: "",
@@ -43,7 +43,11 @@ export const EstoqueList: React.FC<EstoqueListProps> = ({ estoque, id }) => {
                 } as Estoque);
                 // duplicar material
             } else if (id > 0) {
-                getEstoqueById(id).then((estoque) => setSelectedItem(estoque)).catch((error) => {
+                setSelectedItemMode("create");
+                getEstoqueById(id).then((estoque) => {
+                    setSelectedItem(estoque);
+                    setSelectedOrigItem(estoque);
+                }).catch((error) => {
                     console.error("Erro ao encontrar material para duplicar!\n", error);
                 });
             } else {
@@ -53,20 +57,17 @@ export const EstoqueList: React.FC<EstoqueListProps> = ({ estoque, id }) => {
     }, []);
 
     const handleEditClick = (item: Estoque) => {
+        setSelectedItemMode('edit');
         setSelectedItem(item);
     };
 
     const handleFornecedorChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
         const { name, value } = e.target;
-        console.log("Campo e valor obtido no handleFornecedorChange:\n", name, value);
 
         if (name === 'name') {
             const fornecedor = fornecedores?.find((fornecedor) => fornecedor.nome === value);
-            console.log('Fornecedor encontrado no handle:\n', fornecedor)
-            console.log("Id do fornecedor:\n", fornecedor?.idFornecedor)
             if (!fornecedor) return;
 
-            console.log('Fornecedor antes de setSelectedItem:\n', fornecedor);
             setSelectedItem((prev) => {
                 if (!prev) return prev;
                 return {
@@ -96,15 +97,83 @@ export const EstoqueList: React.FC<EstoqueListProps> = ({ estoque, id }) => {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
+
+        console.log("HandleChange:\nname:\n", name, "\nvalue:\n", value);
+
         setSelectedItem((prev) => ({
             ...(prev as Estoque),
             [name]: [value],
         }));
+    };
+
+    const handleSubmitCreate = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        console.log("Estado do item selecionado no momento do submit:\n", selectedItem)
+
+        if (!selectedItem?.nome || selectedItem.quantidade == null || selectedItem.unidade === "" ||
+            selectedItem.estoqueMin == null || !selectedItem.criadoEm || !selectedItem.fornecedor.nome) {
+            window.alert("Preencha todos os campos!");
+            return;
+        }
+
+        try {
+            await createEstoque(selectedItem);
+            window.alert("Material criado com sucesso!");
+        } catch (error) {
+            console.error("Erro ao criar material!\n", error);
+            window.alert("Erro ao criar material!");
+        }
+
+        navigate("/estoque");
+        window.location.reload();
+    }
+
+    const handleSubmitEdit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (selectedItem === selectedOrigItem) {
+            alert("Nenhuma alteração realizada!");
+            return;
+        }
+
+        if (!selectedItem?.nome || selectedItem.quantidade == null || selectedItem.unidade === "" ||
+            selectedItem.estoqueMin == null || !selectedItem.criadoEm || !selectedItem.fornecedor.nome) {
+            window.alert("Preencha todos os campos!");
+            return;
+        }
+
+        try {
+            await updateEstoque(selectedItem.idMaterial, selectedItem);
+            alert("Material atualizado com sucesso!")
+        } catch (error) {
+            console.log("Erro ao atualizar material!\n", error)
+            alert("Erro ao atualizar material!")
+        }
+
+        navigate("/estoque");
+        window.location.reload();
     }
 
     return (
-        <div className="w-full max-w-4xl mx-auto bg-gray-800 rounded-lg shadow-md p-4 max-h-screen overflow-y-auto">
-            <table className="table-auto w-full text-center text-amber-100">
+        <div className="relative w-full max-w-4xl mx-auto bg-gray-800 rounded-lg shadow-md p-4 max-h-screen overflow-y-auto">
+            <div onClick={() => {
+                navigate('new');
+                setSelectedItemMode('create');
+                setSelectedItem({
+                    criadoEm: new Date(Date.now()).toISOString().split('T')[0],
+                    fornecedor: {
+                        contato: "",
+                        link: "",
+                        nome: ""
+                    }
+                } as Estoque);
+            }}
+                className="cursor-pointer absolute top-1 left-1 rounded-full"
+            >
+                <FaPlusSquare size={30} className="text-amber-100 hover:text-green-200 transition-all duration-150" />
+            </div>
+            <table className="mt-3 table-auto w-full text-center text-amber-100">
                 <thead>
                     <tr>
                         <th className="px-4 py-2">Produto</th>
@@ -135,8 +204,7 @@ export const EstoqueList: React.FC<EstoqueListProps> = ({ estoque, id }) => {
                                     </button>
 
                                     <button className={`cursor-pointer ${i % 2 == 0 ? 'bg-gray-700' : 'bg-gray-800'} hover:bg-gray-800 text-amber-100 font-bold py-2 px-2 rounded-full`}
-                                        onClick={() => navigate(`/estoque/new/${Number(item.idMaterial)}`)}
-                                    >
+                                        onClick={() => navigate(`/estoque/new/${Number(item.idMaterial)}`)}>
                                         <FaClone />
                                     </button>
                                 </div>
@@ -155,15 +223,28 @@ export const EstoqueList: React.FC<EstoqueListProps> = ({ estoque, id }) => {
             {
                 selectedItem && (
                     <div className="fixed inset-0 bg-black/70 bg-opacity-50 flex justify-center items-center z-50 px-5">
+
+                        <FaWindowClose size={28}
+                            className='cursor-pointer fixed top-5 w-auto bg-red-200 p-0.5 rounded-full text-gray-800'
+                            onClick={() => {
+                                setSelectedItem(null);
+                                navigate('/estoque');
+                            }}
+                        />
                         <div className="bg-gray-700 rounded-lg shadow-md p-5 w-full max-w-lg h-fit mx-3 max-h-11/12 overflow-y-auto">
-                            <h3 className="text-amber-100 text-lg font-bold mb-4">Editar Item</h3>
-                            <form>
+                            <h3 className="text-amber-100 text-lg font-bold mb-4">{selectedItemMode == 'edit' ? 'Editar' : 'Criar'} Item</h3>
+                            <form onSubmit={selectedItemMode == 'edit' ? handleSubmitEdit : handleSubmitCreate}>
                                 <div className="mb-4">
                                     <label className="block text-amber-100 text-sm font-bold mb-2">Produto</label>
                                     <input
                                         type="text"
+                                        id="nome"
+                                        name="nome"
                                         value={selectedItem.nome}
                                         className="w-full px-3 py-2 text-gray-700 bg-gray-200 rounded"
+                                        onChange={(e) =>
+                                            setSelectedItem({ ...selectedItem, nome: e.target.value })
+                                        }
                                     />
                                 </div>
                                 <div className="mb-4">
@@ -204,7 +285,7 @@ export const EstoqueList: React.FC<EstoqueListProps> = ({ estoque, id }) => {
                                     <input
                                         type="date"
                                         id="criadoEm"
-                                        name="CriadoEm"
+                                        name="criadoEm"
                                         value={new Date(selectedItem.criadoEm).toISOString().split('T')[0]}
                                         onChange={handleChange}
                                         className="w-full px-3 py-2 text-gray-700 bg-gray-200 rounded"
@@ -263,7 +344,7 @@ export const EstoqueList: React.FC<EstoqueListProps> = ({ estoque, id }) => {
                                         type="submit"
                                         className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-4 rounded"
                                     >
-                                        Salvar
+                                        {selectedItemMode == 'edit' ? 'Salvar' : 'Criar'}
                                     </button>
                                 </div>
                             </form>
