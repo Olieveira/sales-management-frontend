@@ -1,5 +1,4 @@
 import { useVendas } from '../hooks/useVendas';
-import Header from '../layouts/Header';
 import { Link } from 'react-router-dom';
 import { FaPlusSquare } from 'react-icons/fa';
 import { Loading } from '../components/Loading';
@@ -9,21 +8,18 @@ export const Vendas = () => {
     const { data: vendas, isLoading, error } = useVendas();
 
     if (isLoading) return (
-        <div>
-            <Header />
+        <div className="bg-gray-950 min-h-screen flex items-center justify-center">
             <Loading texto={'Vendas'} />
         </div>
     );
     if (error) return (
-        <div>
-            <Header />
+        <div className="bg-gray-950 min-h-screen flex items-center justify-center">
             <Loading texto={'Vendas'} error />
         </div>
     );
 
     return (
-        <div className='bg-gray-700 h-screen'>
-            <Header />
+        <div className='min-h-screen'>
             <div className='flex-col justify-center items-center pb-7'>
                 <div className="flex flex-col items-center justify-center">
                     <div className='flex w-full justify-center items-center'>

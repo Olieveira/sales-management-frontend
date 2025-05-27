@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Layout from "./layouts/Layout";
 import { Produtos } from "./pages/Produtos";
 import { Home } from "./pages/Home";
 import { EditForm } from "./pages/EditarProduto";
@@ -34,19 +35,21 @@ export const AppRoutes = () => {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/produtos" element={<Produtos />} />
-                <Route path="/produtos/edit/:id" element={<ProdutoWrapper />} />
-                <Route path="/produtos/new" element={<CreateForm />} />
-                <Route path="/produtos/new/:id" element={<CreateFormWrapper />} />
-                <Route path="/vendas" element={<Vendas />} />
-                <Route path="/vendas/edit" element={<Vendas />} />
-                <Route path="/vendas/edit/:id" element={<VendaWrapper />} />
-                <Route path="/vendas/new" element={<NewVendaForm />} />
-                <Route path="/vendas/new/:id" element={<NewVendaWrapper />} />
-                <Route path="/estoque" element={<Estoque />} />
-                <Route path="/estoque/new" element={<Estoque id={0} />} />
-                <Route path="/estoque/new/:id" element={<EstoqueDuplicateWrapper />} />
-                <Route path="*" element={<Home />} />
+                <Route element={<Layout />} >
+                    <Route path="/produtos" element={<Produtos />} />
+                    <Route path="/produtos/edit/:id" element={<ProdutoWrapper />} />
+                    <Route path="/produtos/new" element={<CreateForm />} />
+                    <Route path="/produtos/new/:id" element={<CreateFormWrapper />} />
+                    <Route path="/vendas" element={<Vendas />} />
+                    <Route path="/vendas/edit" element={<Vendas />} />
+                    <Route path="/vendas/edit/:id" element={<VendaWrapper />} />
+                    <Route path="/vendas/new" element={<NewVendaForm />} />
+                    <Route path="/vendas/new/:id" element={<NewVendaWrapper />} />
+                    <Route path="/estoque" element={<Estoque />} />
+                    <Route path="/estoque/new" element={<Estoque id={0} />} />
+                    <Route path="/estoque/new/:id" element={<EstoqueDuplicateWrapper />} />
+                    <Route path="*" element={<Home />} />
+                </Route>
             </Routes>
         </BrowserRouter>
     )

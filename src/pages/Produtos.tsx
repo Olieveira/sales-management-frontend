@@ -1,6 +1,5 @@
 import { useProdutos } from '../hooks/useProdutos';
 import ProdutosList from '../components/ProdutosList';
-import Header from '../layouts/Header';
 import { Link } from 'react-router-dom';
 import { FaPlusSquare } from 'react-icons/fa';
 import { Loading } from '../components/Loading';
@@ -8,21 +7,18 @@ import { Loading } from '../components/Loading';
 export const Produtos = () => {
     const { data: produtos, isLoading, error } = useProdutos();
     if (isLoading) return (
-        <div>
-            <Header />
+        <div className="bg-gray-950 min-h-screen flex items-center justify-center">
             <Loading texto={'produtos'} />
         </div>
     );
     if (error) return (
-        <div>
-            <Header />
+        <div className="bg-gray-950 min-h-screen flex items-center justify-center">
             <Loading texto={'produtos'} error />
         </div>
     );
 
     return (
-        <div className='bg-gray-700 h-screen'>
-            <Header />
+        <div className='min-h-screen'>
             <div className='flex-col justify-center items-center p-4'>
                 <div className="flex flex-col items-center justify-center">
                     <div className='flex w-full justify-center items-center'>
@@ -38,7 +34,7 @@ export const Produtos = () => {
                     {produtos && produtos.length > 0 ? (
                         <ProdutosList produtos={produtos.map(produto => ({ produto }))} card />
                     ) : (
-                        <p> Nenhum produto encontrado!</p>
+                        <p className="text-gray-200"> Nenhum produto encontrado!</p>
                     )}
                 </div>
             </div>

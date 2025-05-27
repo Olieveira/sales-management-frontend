@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createEstoque, Estoque, getEstoqueById, updateEstoque } from '../services/estoqueService';
 import { useFornecedor } from '../hooks/useFornecedor';
-import { FaClone, FaEdit, FaEye, FaPlusSquare, FaTrash, FaWindowClose } from 'react-icons/fa';
+import { FaClone, FaEdit, FaEye, FaPlusCircle, FaTrash, FaWindowClose } from 'react-icons/fa';
 import { Fornecedor } from '../services/fornecedorService';
 import { useNavigate } from 'react-router-dom';
 
@@ -156,7 +156,7 @@ export const EstoqueList: React.FC<EstoqueListProps> = ({ estoque, id }) => {
     }
 
     return (
-        <div className="relative w-full max-w-4xl mx-auto bg-gray-800 rounded-lg shadow-md p-4 max-h-screen overflow-y-auto">
+        <div className="relative max-w-full max-h-full bg-gray-800 rounded-lg shadow-md p-2">
             <div onClick={() => {
                 navigate('new');
                 setSelectedItemMode('create');
@@ -169,26 +169,29 @@ export const EstoqueList: React.FC<EstoqueListProps> = ({ estoque, id }) => {
                     }
                 } as Estoque);
             }}
-                className="cursor-pointer absolute top-1 left-1 rounded-full"
+                className="cursor-pointer absolute -top-2 -left-2 rounded-full"
             >
-                <FaPlusSquare size={30} className="text-amber-100 hover:text-green-200 transition-all duration-150" />
+                <FaPlusCircle size={30} className="text-amber-100 hover:text-green-200 transition-all duration-150" />
             </div>
             <table className="mt-3 table-auto w-full text-center text-amber-100">
                 <thead>
                     <tr>
-                        <th className="px-4 py-2">Produto</th>
-                        <th className="px-4 py-2">Quantidade</th>
-                        <th className="px-4 py-2 hidden sm:table-cell">Estoque Min.</th>
-                        <th className="px-4 py-2 hidden sm:table-cell">Un. de Medida</th>
-                        <th className="px-4 py-2 hidden md:table-cell">Criado em</th>
-                        <th className="px-4 py-2">Ações</th>
+                        <th className="sm:px-4 px-2 py-2">Produto</th>
+
+                        <th className="sm:px-4 px-2 py-2 sm:table-cell hidden">Quantidade</th>
+                        <th className="sm:px-4 px-2 py-2 table-cell sm:hidden">Quant.</th>
+
+                        <th className="sm:px-4 px-2 py-2 hidden sm:table-cell">Estoque Min.</th>
+                        <th className="sm:px-4 px-2 py-2 hidden sm:table-cell">Un. de Medida</th>
+                        <th className="sm:px-4 px-2 py-2 hidden md:table-cell">Criado em</th>
+                        <th className="sm:px-4 px-2 py-2">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     {estoque.map((item, i) => (
                         <tr key={item.idMaterial} className={`hover:bg-gray-700 ${i % 2 == 0 ? 'bg-gray-800' : 'bg-gray-700'}`}>
-                            <td className="border px-4 py-2">{item.nome}</td>
-                            <td className="border px-4 py-2">{item.quantidade}</td>
+                            <td className="border sm:px-4 px-2 py-2">{item.nome}</td>
+                            <td className="border sm:px-4 px-2 py-2">{item.quantidade}</td>
                             <td className="border px-4 py-2 hidden sm:table-cell">{item.estoqueMin}</td>
                             <td className="border px-4 py-2 hidden sm:table-cell">{item.unidade}</td>
                             <td className="border px-4 py-2 hidden md:table-cell">{item.criadoEm.replace(/-/g, "/").split('T')[0]}</td>
@@ -222,7 +225,7 @@ export const EstoqueList: React.FC<EstoqueListProps> = ({ estoque, id }) => {
             {/* form CRUD */}
             {
                 selectedItem && (
-                    <div className="fixed inset-0 bg-black/70 bg-opacity-50 flex justify-center items-center z-50 px-5">
+                    <div className="fixed inset-0 bg-black/70 bg-opacity-50 flex justify-center items-center px-5">
 
                         <FaWindowClose size={28}
                             className='cursor-pointer fixed top-5 w-auto bg-red-200 p-0.5 rounded-full text-gray-800'

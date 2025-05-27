@@ -1,5 +1,4 @@
 import { useEstoque } from '../hooks/useEstoque';
-import Header from '../layouts/Header';
 import { Loading } from '../components/Loading';
 import { EstoqueList } from '../components/EstoqueList';
 
@@ -11,22 +10,19 @@ export const Estoque: React.FC<EstoqueProps> = ({ id }) => {
     const { data: estoque, isLoading, error } = useEstoque();
 
     if (isLoading) return (
-        <div>
-            <Header />
+        <div className="bg-gray-950 min-h-screen flex items-center justify-center">
             <Loading texto={'Estoque'} />
         </div>
     );
     if (error) return (
-        <div>
-            <Header />
+        <div className="bg-gray-950 min-h-screen flex items-center justify-center">
             <Loading texto={'Estoque'} error />
         </div>
     );
 
     return (
-        <div className='bg-gray-700 h-screen'>
-            <Header />
-            <div className='flex-col justify-center items-center pb-7'>
+        <div className='min-h-screen'>
+            <div className='flex-col justify-center items-center pb-2'>
                 <div className="flex flex-col items-center justify-center">
                     <div className='flex w-full justify-center items-center'>
                         <div className='grow text-center'>

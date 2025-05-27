@@ -49,7 +49,7 @@ export const VendaCard: React.FC<VendaCardProps> = ({ venda, deleteProdutosBtn }
     }
 
     return (
-        <div className={`rounded-2xl w-full mx-2 sm:mx-0 sm:w-96 min-h-72 bg-gray-800 flex flex-col justify-between items-center shadow-lg shadow-gray-700`}>
+        <div className={`rounded-2xl w-80 mx-2 sm:mx-0 sm:w-96 min-h-72 bg-gray-800 flex flex-col justify-between items-center shadow-lg shadow-slate-300/20`}>
 
             <div className="w-full rounded-t-2xl flex h-12 justify-around items-center p-2 bg-amber-100">
                 <div className="h-full flex items-center justify-center">
@@ -60,8 +60,8 @@ export const VendaCard: React.FC<VendaCardProps> = ({ venda, deleteProdutosBtn }
             </div>
 
 
-            <div className="flex flex-col justify-center items-center gap-4 mt-4 p-1 w-full">
-                <div className="h-full flex items-center justify-center p-2 gap-4">
+            <div className="flex flex-col justify-center items-center gap-4 mt-4 px-2">
+                <div className="h-full flex items-center justify-center p-1 gap-4">
                     <FaShoppingCart size={24} className="text-amber-100" />
                     <h3 className="text-xl font-thin text-amber-100">Produtos {`(${venda.itensVenda.length})`}</h3>
                 </div>
@@ -107,8 +107,8 @@ export const VendaCard: React.FC<VendaCardProps> = ({ venda, deleteProdutosBtn }
                 </div>
             </div>
 
-            <div className="flex flex-col justify-center items-center text-center my-4 w-full">
-                <div className="flex justify-center p-2 ml-3 gap-2">
+            <div className="flex flex-col justify-center items-center text-center my-4">
+                <div className="flex justify-center p-2 gap-2">
                     <FaCalendar size={24} className="text-amber-100" />
                     <p className="text-md px-1 text-amber-100 font-thin">Data de criação</p>
                 </div>

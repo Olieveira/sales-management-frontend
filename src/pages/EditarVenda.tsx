@@ -1,5 +1,4 @@
 import React from 'react';
-import Header from '../layouts/Header';
 import { FaCalendarAlt, FaClock, FaCommentDollar, FaCopy, FaCubes, FaDollarSign, FaPlusCircle, FaSave, FaTrash, FaTruckLoading, FaUser, FaWindowClose } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -192,7 +191,6 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
 
     return (
         <div className='bg-gray-700 h-screen relative'>
-            <Header />
             <div className='flex flex-col mt-6 justify-center items-center sm:p-4'>
                 <form onSubmit={handleSubmit} className='bg-gray-900 rounded shadow-2xl w-full max-w-lg shadow-gray-900 relative flex flex-col justify-center items-center'>
                     <div className='flex justify-between items-center w-full bg-gray-800 rounded rounded-b-2xl px-5 py-2 shadow-gray-900 shadow-md'>
