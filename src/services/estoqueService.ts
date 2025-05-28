@@ -33,3 +33,8 @@ export const createEstoque = async (estoque: Omit<Estoque, 'idMaterial'>) => {
     const response = await api.post('/estoque', estoque);
     return response.data;
 }
+
+export const deleteEstoque = async (id: number): Promise<{ success: boolean }> => {
+    const response = await api.delete(`/estoque/${id}`)
+    return response ? { success: true } : { success: false }
+}

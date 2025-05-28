@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { createEstoque, Estoque, getEstoqueById, updateEstoque } from '../services/estoqueService';
+import { createEstoque, Estoque, getEstoqueById, updateEstoque, deleteEstoque } from '../services/estoqueService';
 import { useFornecedor } from '../hooks/useFornecedor';
 import { FaClone, FaEdit, FaEye, FaPlusCircle, FaTrash, FaWindowClose } from 'react-icons/fa';
 import { Fornecedor } from '../services/fornecedorService';
@@ -144,6 +144,24 @@ export const EstoqueList: React.FC<EstoqueListProps> = ({ estoque, id }) => {
         window.location.reload();
     }
 
+    const handleDelete = async (idMaterial: number, nome: string) => {
+        if (window.confirm(`Tem certeza que deseja excluir o material (${nome})?`)) {
+            try {
+                const result = await deleteEstoque(idMaterial);
+                if (result.success) {
+                    showAlert(`Material (${nome}) excluído com sucesso!`)
+                    setTimeout(() => window.location.reload(), 3000)
+                } else {
+                    console.error('Erro ao excluir material')
+                    showAlert(`Erro ao excluir o material (${nome}), certifique-se que o mesmo não possui vínculos com produtos.`)
+                }
+            } catch (error) {
+                console.error('Erro ao excluir material')
+                showAlert(`Erro ao excluir o material (${nome}), certifique-se que o mesmo não possui vínculos com produtos.`)
+            }
+        }
+    }
+
     const handleSubmitEdit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -229,6 +247,7 @@ export const EstoqueList: React.FC<EstoqueListProps> = ({ estoque, id }) => {
 
                                 <button
                                     className="cursor-pointer bg-red-300 hover:bg-red-400 text-white font-bold py-2 px-2 rounded-full"
+                                    onClick={() => handleDelete(item.idMaterial, item.nome)}
                                 >
                                     <FaTrash />
                                 </button>

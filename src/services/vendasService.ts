@@ -29,13 +29,8 @@ export const getVenda = async (idVenda: number): Promise<Venda> => {
 };
 
 export const deleteVenda = async (idVenda: number): Promise<{ success: boolean }> => {
-    try {
-        await api.delete(`/vendas/${idVenda}`);
-        return { success: true };
-    } catch (error) {
-        console.error('Error deleting venda:', error);
-        return { success: false };
-    }
+    const response = await api.delete(`/vendas/${idVenda}`);
+    return response ? { success: true } : { success: false };
 };
 
 export const updateVenda = async (idVenda: number, venda: Partial<Omit<Venda, 'idVenda' | 'criadoEm'>>) => {
