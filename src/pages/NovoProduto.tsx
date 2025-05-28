@@ -4,6 +4,7 @@ import { FaSave } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { getProduto } from '../services/produtoService';
+import { useAlert } from '../components/AlertContext';
 
 interface CreateFormProps {
     id?: number;
@@ -13,6 +14,7 @@ export const CreateForm: React.FC<CreateFormProps> = ({ id }) => {
 
     const [formProduto, setFormProduto] = useState<Produto>({} as Produto);
     const navigate = useNavigate();
+    const showAlert = useAlert();
 
     useEffect(() => {
         const fetchProduto = async () => {
@@ -30,7 +32,7 @@ export const CreateForm: React.FC<CreateFormProps> = ({ id }) => {
                 }
             } catch (error) {
                 navigate("/produtos/new");
-                window.alert("Erro ao buscar produto.");
+                showAlert("Erro ao buscar produto.");
                 console.error('Erro ao buscar produto.\n', error);
             }
         };
@@ -51,11 +53,11 @@ export const CreateForm: React.FC<CreateFormProps> = ({ id }) => {
         e.preventDefault();
 
         if (!formProduto.nome) {
-            alert('O campo nome é obrigatório!');
+            showAlert('O campo nome é obrigatório!');
             return;
         }
         if (formProduto.ativo === undefined) {
-            alert('O campo status é obrigatório!');
+            showAlert('O campo status é obrigatório!');
             return;
         }
 
@@ -70,12 +72,12 @@ export const CreateForm: React.FC<CreateFormProps> = ({ id }) => {
         const resultado = await createProduto(produtoAjustado);
 
         if (resultado && !resultado.error) {
-            alert(`Produto ${produtoAjustado.idProduto} - ${produtoAjustado.nome} criado com sucesso!`);
+            showAlert(`Produto ${produtoAjustado.idProduto} - ${produtoAjustado.nome} criado com sucesso!`);
             navigate('/produtos');
-            window.location.reload();
+            setTimeout(() => window.location.reload(), 2500)
         } else {
             console.error('Erro ao solicitar criação do produto.\n', resultado.error);
-            alert(`Erro ao solicitar criação do produto!\n${resultado.error || 'Erro desconhecido'}`);
+            showAlert(`Erro ao solicitar criação do produto!\n${resultado.error || 'Erro desconhecido'}`);
         }
     };
 
@@ -221,6 +223,7 @@ export const CreateForm: React.FC<CreateFormProps> = ({ id }) => {
                     </button>
                 </div>
             </form>
+
         </div>
     );
 };

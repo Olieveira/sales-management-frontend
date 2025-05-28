@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { FaHome, FaShoppingCart, FaWarehouse, FaBoxes, FaAngleDoubleUp, FaAngleDoubleDown } from 'react-icons/fa';
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 
 interface MenuItem {
     label: string;
@@ -26,7 +27,12 @@ export function Nav() {
     ];
 
     return (
-        <nav className={`absolute flex flex-col top-20 ${expanded ? 'min-w-20 sm:w-44 h-auto' : 'min-w-12 h-5'} z-20 shadow-md shadow-slate-500/30 rounded-br-2xl bg-gray-900/95 items-center justify-center py-6 border-r border-gray-800`}>
+        <motion.nav
+            initial={{ x: -100 }}
+            animate={{ x: 0 }}
+            exit={{ x: -100 }}
+            transition={{ duration: 0.4, ease: 'easeInOut' }}
+            className={`absolute flex flex-col top-20 ${expanded ? 'min-w-20 sm:w-44 h-auto' : 'min-w-12 h-5'} z-20 shadow-md shadow-slate-500/30 rounded-br-2xl bg-gray-900/95 items-center justify-center py-6 border-r border-gray-800`}>
             {expanded && (
                 <>
                     <span className="text-white text-base font-semibold mb-6 tracking-wide">Acessos</span>
@@ -60,6 +66,6 @@ export function Nav() {
                 className={`rounded-full bg-gray-800 p-1 cursor-pointer ${expanded && 'mt-5'}`}>
                 {expanded ? <FaAngleDoubleUp className='text-gray-400 text-lg' /> : <FaAngleDoubleDown className='text-gray-400 text-lg' />}
             </div>
-        </nav>
+        </motion.nav>
     )
 }

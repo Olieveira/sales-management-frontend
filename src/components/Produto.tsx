@@ -1,36 +1,38 @@
 import { Link } from "react-router-dom";
 import { Produto, inativarProduto, ativarProduto } from "../services/produtoService";
 import { FaCommentDots, FaRulerCombined, FaShoppingBag, FaCalendar, FaCoins, FaCubes, FaBoxes, FaTrash, FaPlusCircle } from "react-icons/fa";
+import { useAlert } from "./AlertContext";
 
 interface ProdutoCardProps {
     produto: Produto;
     quantidade?: number; // Para renderização em vendas 
 }
 
-const handleTrocarStatus = async (idProduto: number, produto: Produto) => {
-    const confirmacao = window.confirm(`Tem certeza que deseja ${produto.ativo ? 'inativar' : 'ativar'} o produto ${produto.nome} ?`);
-
-    if (confirmacao) {
-        try {
-
-            const resultado = produto.ativo ? await inativarProduto(idProduto) : await ativarProduto(idProduto);
-
-            if (resultado && !resultado.error) {
-                alert(`Produto ${produto.nome} ${!produto.ativo ? 'ativado' : 'inativado'} com sucesso!`);
-                window.location.reload();
-            } else {
-                console.error(`Erro ao ${produto.ativo ? 'inativar' : 'ativar'} o produto: `, produto.nome);
-                alert(`Erro ao inativar o produto ${produto.nome}!\n${resultado.error || 'Erro desconhecido'}`);
-            }
-
-        } catch (e) {
-            console.log("Erro ao solicitar atualização do produto:\n", e)
-            window.alert("Houve um erro interno ao tentar atualizar o produto.")
-        }
-    }
-};
-
 export const ProdutoCard: React.FC<ProdutoCardProps> = ({ produto }) => {
+    
+    const showAlert = useAlert();
+    const handleTrocarStatus = async (idProduto: number, produto: Produto) => {
+        const confirmacao = window.confirm(`Tem certeza que deseja ${produto.ativo ? 'inativar' : 'ativar'} o produto ${produto.nome} ?`);
+
+        if (confirmacao) {
+            try {
+                const resultado = produto.ativo ? await inativarProduto(idProduto) : await ativarProduto(idProduto);
+
+                if (resultado && !resultado.error) {
+                    showAlert(`Produto ${produto.nome} ${!produto.ativo ? 'ativado' : 'inativado'} com sucesso!`);
+                    setTimeout(() => window.location.reload(), 2500)
+                } else {
+                    console.error(`Erro ao ${produto.ativo ? 'inativar' : 'ativar'} o produto: `, produto.nome);
+                    showAlert(`Erro ao inativar o produto ${produto.nome}!\n${resultado.error || 'Erro desconhecido'}`);
+                }
+
+            } catch (e) {
+                console.log("Erro ao solicitar atualização do produto:\n", e)
+                showAlert("Houve um erro interno ao tentar atualizar o produto.")
+            }
+        }
+    };
+
     return (
         <div className={`rounded-2xl w-72 min-h-72 ${!produto.ativo ? 'bg-rose-950' : 'bg-gray-800'} flex flex-col justify-between items-center shadow-lg shadow-gray-700`}>
 
@@ -94,6 +96,7 @@ export const ProdutoCard: React.FC<ProdutoCardProps> = ({ produto }) => {
                     <p className="text-md font-semibold text-amber-100 hover">{produto.ativo ? 'Inativar' : 'Ativar'}</p>
                 </Link>
             </div>
+
         </div>
     );
 };

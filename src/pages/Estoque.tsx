@@ -10,12 +10,12 @@ export const Estoque: React.FC<EstoqueProps> = ({ id }) => {
     const { data: estoque, isLoading, error } = useEstoque();
 
     if (isLoading) return (
-        <div className="bg-gray-950 min-h-screen flex items-center justify-center">
+        <div className="bg-gray-950 h-full flex items-center justify-center">
             <Loading texto={'Estoque'} />
         </div>
     );
     if (error) return (
-        <div className="bg-gray-950 min-h-screen flex items-center justify-center">
+        <div className="bg-gray-950 h-full flex items-center justify-center">
             <Loading texto={'Estoque'} error />
         </div>
     );

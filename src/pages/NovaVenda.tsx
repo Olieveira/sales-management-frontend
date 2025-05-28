@@ -9,6 +9,7 @@ import { useProdutos } from '../hooks/useProdutos';
 import { useStatus } from '../hooks/useStatus';
 import { usePlataformas } from '../hooks/usePlataformas';
 import { createItensVenda, ItemVenda } from '../services/itensVendaService';
+import { useAlert } from '../components/AlertContext'
 
 interface CreateFormProps {
     id?: Number;
@@ -23,11 +24,8 @@ export const NewVendaForm: React.FC<CreateFormProps> = ({ id }) => {
     const { data: status } = useStatus();
     const { data: plataformas } = usePlataformas();
 
+    const showAlert = useAlert();
     const navigate = useNavigate();
-
-    useEffect(() => {
-        console.log("Venda alterada:\n", venda);
-    }, [venda])
 
     useEffect(() => {
         const fetchVenda = async () => {
@@ -50,7 +48,7 @@ export const NewVendaForm: React.FC<CreateFormProps> = ({ id }) => {
                     }));
                 }
             } catch (error) {
-                window.alert(`Erro ao buscar venda informada!`);
+                showAlert(`Erro ao buscar venda informada!`);
                 navigate("/vendas/new");
             }
         };
@@ -104,7 +102,7 @@ export const NewVendaForm: React.FC<CreateFormProps> = ({ id }) => {
         console.log("Venda recebida do form para criação:\n", venda)
 
         if (venda.itensVenda?.length <= 0 || !venda.nomeComprador || !venda.total || !venda.criadoEm) {
-            alert("Preencha todos os campos e adicione pelo menos um produto!");
+            showAlert('Preencha todos os campos e adicione pelo menos um produto!');
             return;
         }
 
@@ -141,16 +139,17 @@ export const NewVendaForm: React.FC<CreateFormProps> = ({ id }) => {
             }
 
             if (vendaResponse && !itensVendaError) {
-                alert('Venda criada com sucesso!');
+                showAlert('Venda criada com sucesso!');
                 navigate('/vendas');
+                setTimeout(() => window.location.reload(), 2500)
             } else {
                 console.error('Erro ao criar venda ou registro dos itens!');
-                alert(`Erro ao criar venda ou registro dos itens!\n${vendaResponse.error || 'Erro desconhecido'}`);
+                showAlert(`Erro ao criar venda ou registro dos itens!\n${vendaResponse.error || 'Erro desconhecido'}`);
             }
 
         } catch (error: any) {
             console.error('Erro ao criar venda ou registro dos itens:', error);
-            alert(`Erro ao criar venda ou registro dos itens!\n${error.message || 'Erro desconhecido'}`);
+            showAlert(`Erro ao criar venda ou registro dos itens!\n${error.message || 'Erro desconhecido'}`);
         }
     };
 
@@ -308,6 +307,7 @@ export const NewVendaForm: React.FC<CreateFormProps> = ({ id }) => {
                     </div>
                 )}
             </form>
+
         </div>
     );
 };

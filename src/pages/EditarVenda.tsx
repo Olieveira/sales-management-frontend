@@ -9,6 +9,7 @@ import { useProdutos } from '../hooks/useProdutos';
 import { useStatus } from '../hooks/useStatus';
 import { usePlataformas } from '../hooks/usePlataformas';
 import { createItensVenda, deleteItensVenda, ItemVenda, updateItensVenda } from '../services/itensVendaService';
+import { useAlert } from '../components/AlertContext';
 
 interface EditFormProps {
     id?: Number;
@@ -24,6 +25,7 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
     const { data: status } = useStatus();
     const { data: plataformas } = usePlataformas();
 
+    const showAlert = useAlert();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -39,7 +41,7 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                     console.error("Venda data is undefined or null");
                 }
             } catch (error) {
-                window.alert(`Erro ao buscar venda:`);
+                showAlert(`Erro ao buscar venda:`);
                 console.log("Erro ao buscar venda:\n", error)
                 navigate("/vendas");
             }
@@ -64,16 +66,16 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
             try {
                 const resultado = await deleteVenda(Number(venda?.idVenda));
                 if (resultado.success) {
-                    alert(`Venda ${venda?.idVenda} excluída com sucesso!`);
+                    showAlert(`Venda ${venda?.idVenda} excluída com sucesso!`);
                     navigate('/vendas');
-                    window.location.reload();
+                    setTimeout(() => window.location.reload(), 2500)
                 } else {
                     console.error('Erro ao excluir venda: ', venda?.idVenda);
-                    alert(`Erro ao excluir venda ${venda?.idVenda}!`);
+                    showAlert(`Erro ao excluir venda ${venda?.idVenda}!`);
                 }
             } catch (error) {
                 console.error('Erro ao excluir venda');
-                alert(`Erro ao excluir venda ${venda?.idVenda}!`);
+                showAlert(`Erro ao excluir venda ${venda?.idVenda}!`);
             }
         }
     };
@@ -112,7 +114,7 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
         e.preventDefault();
 
         if (JSON.stringify(vendaOriginal) === JSON.stringify(venda) && JSON.stringify(produtosOriginal) === JSON.stringify(produtos)) {
-            alert('Nenhuma alteração realizada!');
+            showAlert('Nenhuma alteração realizada!');
             return;
         };
 
@@ -180,12 +182,12 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
         }
 
         if (resultadoVenda) {
-            alert(`Venda ${venda?.idVenda} - ${venda?.nomeComprador ? venda.nomeComprador : ''} atualizado com sucesso!`);
+            showAlert(`Venda ${venda?.idVenda} - ${venda?.nomeComprador ? venda.nomeComprador : ''} atualizado com sucesso!`);
             navigate('/vendas');
-            window.location.reload();
+            setTimeout(() => window.location.reload(), 2500)
         } else {
             console.error(`Erro ao atualizar venda ${venda}`);
-            alert(`Erro ao atualizar venda ${venda?.idVenda}!\n${resultadoVenda.error || 'Erro desconhecido'}`);
+            showAlert(`Erro ao atualizar venda ${venda?.idVenda}!\n${resultadoVenda.error || 'Erro desconhecido'}`);
         }
     };
 
@@ -357,6 +359,7 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                     )}
                 </form>
             </div>
+
         </div>
     );
 };

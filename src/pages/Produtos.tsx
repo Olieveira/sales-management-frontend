@@ -7,12 +7,12 @@ import { Loading } from '../components/Loading';
 export const Produtos = () => {
     const { data: produtos, isLoading, error } = useProdutos();
     if (isLoading) return (
-        <div className="bg-gray-950 min-h-screen flex items-center justify-center">
+        <div className="bg-gray-950 h-full flex items-center justify-center">
             <Loading texto={'produtos'} />
         </div>
     );
     if (error) return (
-        <div className="bg-gray-950 min-h-screen flex items-center justify-center">
+        <div className="bg-gray-950 h-full flex items-center justify-center">
             <Loading texto={'produtos'} error />
         </div>
     );

@@ -8,12 +8,12 @@ export const Vendas = () => {
     const { data: vendas, isLoading, error } = useVendas();
 
     if (isLoading) return (
-        <div className="bg-gray-950 min-h-screen flex items-center justify-center">
+        <div className="bg-gray-950 h-full flex items-center justify-center">
             <Loading texto={'Vendas'} />
         </div>
     );
     if (error) return (
-        <div className="bg-gray-950 min-h-screen flex items-center justify-center">
+        <div className="bg-gray-950 h-full flex items-center justify-center">
             <Loading texto={'Vendas'} error />
         </div>
     );

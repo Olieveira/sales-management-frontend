@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 
 export const Home = () => {
+
     return (
         <div className='h-full flex justify-center items-center overflow-hidden'>
             <div className='grid grid-cols-2 gap-4 w-75 items-center justify-center'>

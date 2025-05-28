@@ -4,6 +4,7 @@ import { deleteVenda, Venda } from "../services/vendasService";
 import ProdutosList from "./ProdutosList";
 import { useEffect, useState } from "react";
 import { Produto } from "../services/produtoService";
+import { useAlert } from "./AlertContext";
 
 interface VendaCardProps {
     venda: Venda;
@@ -15,6 +16,7 @@ export const VendaCard: React.FC<VendaCardProps> = ({ venda, deleteProdutosBtn }
     const [produtos, setProdutos] = useState<Array<{ produto: Produto, quantidade?: number }>>()
     const [expanded, setExpanded] = useState<boolean>(false);
 
+    const showAlert = useAlert();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -29,16 +31,16 @@ export const VendaCard: React.FC<VendaCardProps> = ({ venda, deleteProdutosBtn }
             try {
                 const resultado = await deleteVenda(Number(venda?.idVenda));
                 if (resultado.success) {
-                    alert(`Venda ${venda?.idVenda} excluída com sucesso!`);
+                    showAlert(`Venda ${venda?.idVenda} excluída com sucesso!`);
                     navigate('/vendas');
-                    window.location.reload();
+                    setTimeout(() => window.location.reload(), 2500);
                 } else {
                     console.error('Erro ao excluir venda: ', venda?.idVenda);
-                    alert(`Erro ao excluir venda ${venda?.idVenda}!`);
+                    showAlert(`Erro ao excluir venda ${venda?.idVenda}!`);
                 }
             } catch (error) {
                 console.error('Erro ao excluir venda');
-                alert(`Erro ao excluir venda ${venda?.idVenda}!`);
+                showAlert(`Erro ao excluir venda ${venda?.idVenda}!`);
             }
         }
     };
@@ -58,7 +60,6 @@ export const VendaCard: React.FC<VendaCardProps> = ({ venda, deleteProdutosBtn }
                 <h2 className="text-lg text-center font-semibold text-gray-600 px-2 shrink leading-tight">{venda.plataforma}</h2>
                 <h3 className="text-lg text-center font-semibold text-gray-600">{venda.idVenda}</h3>
             </div>
-
 
             <div className="flex flex-col justify-center items-center gap-4 mt-4 px-2">
                 <div className="h-full flex items-center justify-center p-1 gap-4">
@@ -134,6 +135,7 @@ export const VendaCard: React.FC<VendaCardProps> = ({ venda, deleteProdutosBtn }
                     <p className="text-md font-semibold text-gray-800">Excluir</p>
                 </div>
             </div>
+
         </div >
     );
 };

@@ -4,6 +4,7 @@ import { FaSave } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { updateProduto } from '../services/produtoService';
+import { useAlert } from '../components/AlertContext';
 
 interface EditFormProps {
     id?: Number;
@@ -23,6 +24,7 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
     });
     const [originalProduto, setOriginalProduto] = useState<Produto>();
 
+    const showAlert = useAlert();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -35,7 +37,7 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                 }
             } catch (error) {
                 navigate("/produtos");
-                window.alert("Erro ao buscar produto");
+                showAlert("Erro ao buscar produto");
             }
         };
         fetchProduto();
@@ -53,18 +55,18 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
         e.preventDefault();
 
         if (originalProduto === produto) {
-            alert('Nenhuma alteração realizada!');
+            showAlert('Nenhuma alteração realizada!');
             return;
         };
 
         const resultado = await updateProduto(Number(produto?.idProduto), produto as Produto);
         if (resultado && resultado.success) {
-            alert(`Produto ${produto?.idProduto} - ${produto?.nome} atualizado com sucesso!`);
+            showAlert(`Produto ${produto?.idProduto} - ${produto?.nome} atualizado com sucesso!`);
             navigate('/produtos');
-            window.location.reload();
+            setTimeout(() => window.location.reload(), 2500)
         } else {
             console.error('Erro ao atualizar o produto: ', produto?.nome);
-            alert(`Erro ao atualizar o produto ${produto?.nome}!\n${resultado.error || 'Erro desconhecido'}`);
+            showAlert(`Erro ao atualizar o produto ${produto?.nome}!\n${resultado.error || 'Erro desconhecido'}`);
         }
     };
 
@@ -210,6 +212,7 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                     </div>
                 </form>
             </div>
+
         </div>
     );
 };

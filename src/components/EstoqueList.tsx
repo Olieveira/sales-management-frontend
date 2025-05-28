@@ -4,6 +4,7 @@ import { useFornecedor } from '../hooks/useFornecedor';
 import { FaClone, FaEdit, FaEye, FaPlusCircle, FaTrash, FaWindowClose } from 'react-icons/fa';
 import { Fornecedor } from '../services/fornecedorService';
 import { useNavigate } from 'react-router-dom';
+import { useAlert } from './AlertContext';
 
 interface EstoqueListProps {
     estoque: Estoque[];
@@ -15,8 +16,22 @@ export const EstoqueList: React.FC<EstoqueListProps> = ({ estoque, id }) => {
     const [selectedItem, setSelectedItem] = useState<Estoque | null>(null);
     const [selectedItemMode, setSelectedItemMode] = useState<string>('edit');
     const { data: fornecedores } = useFornecedor();
+    const [alert, setAlert] = useState<{ show: boolean, msg: string, duration: number }>({ show: false, msg: "", duration: 3000 })
 
+    const showAlert = useAlert();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!alert.show) return
+
+        const maxDuration = alert.duration > 1800000 ? 1800000 : alert.duration
+
+        const timeout = setTimeout(() => {
+            setAlert((prev) => ({ ...prev, show: false }));
+        }, maxDuration);
+
+        return () => clearTimeout(timeout);
+    }, [alert.msg, alert.show])
 
     useEffect(() => {
         console.log("Selected Item alterado:\n", selectedItem);
@@ -113,16 +128,16 @@ export const EstoqueList: React.FC<EstoqueListProps> = ({ estoque, id }) => {
 
         if (!selectedItem?.nome || selectedItem.quantidade == null || selectedItem.unidade === "" ||
             selectedItem.estoqueMin == null || !selectedItem.criadoEm || !selectedItem.fornecedor.nome) {
-            window.alert("Preencha todos os campos!");
+            showAlert("Preencha todos os campos!");
             return;
         }
 
         try {
             await createEstoque(selectedItem);
-            window.alert("Material criado com sucesso!");
+            showAlert("Material criado com sucesso!");
         } catch (error) {
             console.error("Erro ao criar material!\n", error);
-            window.alert("Erro ao criar material!");
+            showAlert("Erro ao criar material!");
         }
 
         navigate("/estoque");
@@ -133,22 +148,22 @@ export const EstoqueList: React.FC<EstoqueListProps> = ({ estoque, id }) => {
         e.preventDefault();
 
         if (selectedItem === selectedOrigItem) {
-            alert("Nenhuma alteração realizada!");
+            showAlert("Nenhuma alteração realizada!");
             return;
         }
 
         if (!selectedItem?.nome || selectedItem.quantidade == null || selectedItem.unidade === "" ||
             selectedItem.estoqueMin == null || !selectedItem.criadoEm || !selectedItem.fornecedor.nome) {
-            window.alert("Preencha todos os campos!");
+            showAlert("Preencha todos os campos!");
             return;
         }
 
         try {
             await updateEstoque(selectedItem.idMaterial, selectedItem);
-            alert("Material atualizado com sucesso!")
+            showAlert("Material atualizado com sucesso!")
         } catch (error) {
             console.log("Erro ao atualizar material!\n", error)
-            alert("Erro ao atualizar material!")
+            showAlert("Erro ao atualizar material!")
         }
 
         navigate("/estoque");
@@ -355,6 +370,7 @@ export const EstoqueList: React.FC<EstoqueListProps> = ({ estoque, id }) => {
                     </div>
                 )
             }
+
         </div >
     );
 };

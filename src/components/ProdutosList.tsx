@@ -21,7 +21,6 @@ const ProdutosList: React.FC<ProdutosListProps> = ({ produtos, card, list, selec
             } else if (list) {
                 return <ProdutoListItem key={produto.idProduto} produto={produto} quantidade={quantidade} onDelete={onDeleteFromList} />;
             } else if (selectItem) {
-                console.log("Key (id) do produto renderizado: ", produto.idProduto)
                 return <SelectProdutoListItem key={produto.idProduto} produto={produto} onSelectItem={onSelectItem} />
             }
         } else {
