@@ -1,44 +1,20 @@
+import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
-import { Link } from 'react-router-dom';
-
-interface MenuItem {
-  label: string;
-  path: string;
-}
 
 const Header: React.FC = () => {
 
-  const menuItems: MenuItem[] = [
-    { label: 'Home', path: '/' },
-    { label: 'Produtos', path: '/produtos' },
-    { label: 'Vendas', path: '/vendas' },
-  ];
-
   return (
-    <header className="flex items-center w-screen h-16 bg-gray-800 text-white shadow-lg shadow-neutral-600">
-      <div className="flex w-full justify-between px-6 items-center">
-        <Link to={menuItems[0].path}>
-          <h1 className="text-2xl font-bold hidden sm:block">Creative Mimos</h1>
-          <div className="bg-cover w-14 h-14 rounded-2xl bg-[url(./assets/logo.png)] sm:hidden" />
-        </Link>
-        {/* Menu de navegação */}
-        <nav>
-          <ul className="flex space-x-6">
-            {menuItems.map((item) => (
-              <li key={item.label}>
-                <Link
-                  to={item.path}
-                  className="hover:text-gray-400 transition-colors"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </div>
-    </header>
-  );
+    <AnimatePresence>
+      <motion.header className="h-20 flex items-center justify-center bg-gradient-to-b shadow-md shadow-slate-500/30 from-gray-900/70 to-gray-950/80"
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: -100, opacity: 0 }}
+        transition={{ duration: 0.8, ease: 'easeInOut', type: 'spring' }}
+      >
+        <h1 className="text-white text-2xl font-bold tracking-wide">Gerenciador de vendas</h1>
+      </motion.header>
+    </AnimatePresence>
+  )
 };
 
 export default Header;

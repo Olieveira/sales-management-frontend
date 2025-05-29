@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Layout from "./layouts/Layout";
 import { Produtos } from "./pages/Produtos";
 import { Home } from "./pages/Home";
 import { EditForm } from "./pages/EditarProduto";
@@ -7,6 +8,8 @@ import { useParams } from "react-router-dom";
 import { CreateForm } from "./pages/NovoProduto";
 import { Vendas } from "./pages/Vendas";
 import { NewVendaForm } from "./pages/NovaVenda";
+import { Estoque } from "./pages/Estoque";
+import { AnimatePresence } from "framer-motion";
 
 const ProdutoWrapper = () => {
     const { id } = useParams<{ id: string }>();
@@ -16,30 +19,41 @@ const VendaWrapper = () => {
     const { id } = useParams<{ id: string }>();
     return <EditVenda id={Number(id)} />;
 };
-const CreateFormWrapper = () => {
-    const { id } = useParams<{ id: string }>();
-    return <CreateForm id={Number(id)} />;
-};
 const NewVendaWrapper = () => {
     const { id } = useParams<{ id: string }>();
     return <NewVendaForm id={Number(id)} />;
 }
+const CreateFormWrapper = () => {
+    const { id } = useParams<{ id: string }>();
+    return <CreateForm id={Number(id)} />;
+};
+const EstoqueDuplicateWrapper = () => {
+    const { id } = useParams<{ id: string }>();
+    return <Estoque id={Number(id)} />
+};
 
 export const AppRoutes = () => {
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/produtos" element={<Produtos />} />
-                <Route path="/produtos/edit/:id" element={<ProdutoWrapper />} />
-                <Route path="/produtos/new" element={<CreateForm />} />
-                <Route path="/produtos/new/:id" element={<CreateFormWrapper />} />
-                <Route path="/vendas" element={<Vendas />} />
-                <Route path="/vendas/edit" element={<Vendas />} />
-                <Route path="/vendas/edit/:id" element={<VendaWrapper />} />
-                <Route path="/vendas/new" element={<NewVendaForm />} />
-                <Route path="/vendas/new/:id" element={<NewVendaWrapper />} />
-                <Route path="*" element={<Home />} />
-            </Routes>
-        </BrowserRouter>
+        <AnimatePresence mode="wait">
+            <BrowserRouter>
+                <Routes>
+                    <Route element={<Layout />} >
+                        <Route path="/produtos" element={<Produtos />} />
+                        <Route path="/produtos/edit/:id" element={<ProdutoWrapper />} />
+                        <Route path="/produtos/new" element={<CreateForm />} />
+                        <Route path="/produtos/new/:id" element={<CreateFormWrapper />} />
+                        <Route path="/vendas" element={<Vendas />} />
+                        <Route path="/vendas/edit" element={<Vendas />} />
+                        <Route path="/vendas/edit/:id" element={<VendaWrapper />} />
+                        <Route path="/vendas/new" element={<NewVendaForm />} />
+                        <Route path="/vendas/new/:id" element={<NewVendaWrapper />} />
+                        <Route path="/estoque" element={<Estoque />} />
+                        <Route path="/estoque/new" element={<Estoque id={0} />} />
+                        <Route path="/estoque/new/:id" element={<EstoqueDuplicateWrapper />} />
+                        <Route path="*" element={<Home />} />
+                    </Route>
+                </Routes>
+            </BrowserRouter>
+        </AnimatePresence>
     )
 };

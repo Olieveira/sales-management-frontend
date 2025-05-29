@@ -4,6 +4,7 @@ import { deleteVenda, Venda } from "../services/vendasService";
 import ProdutosList from "./ProdutosList";
 import { useEffect, useState } from "react";
 import { Produto } from "../services/produtoService";
+import { useAlert } from "./AlertContext";
 
 interface VendaCardProps {
     venda: Venda;
@@ -15,6 +16,7 @@ export const VendaCard: React.FC<VendaCardProps> = ({ venda, deleteProdutosBtn }
     const [produtos, setProdutos] = useState<Array<{ produto: Produto, quantidade?: number }>>()
     const [expanded, setExpanded] = useState<boolean>(false);
 
+    const showAlert = useAlert();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -29,16 +31,16 @@ export const VendaCard: React.FC<VendaCardProps> = ({ venda, deleteProdutosBtn }
             try {
                 const resultado = await deleteVenda(Number(venda?.idVenda));
                 if (resultado.success) {
-                    alert(`Venda ${venda?.idVenda} excluída com sucesso!`);
+                    showAlert(`Venda ${venda?.idVenda} excluída com sucesso!`);
                     navigate('/vendas');
-                    window.location.reload();
+                    setTimeout(() => window.location.reload(), 2500);
                 } else {
                     console.error('Erro ao excluir venda: ', venda?.idVenda);
-                    alert(`Erro ao excluir venda ${venda?.idVenda}!`);
+                    showAlert(`Erro ao excluir venda ${venda?.idVenda}!`);
                 }
             } catch (error) {
                 console.error('Erro ao excluir venda');
-                alert(`Erro ao excluir venda ${venda?.idVenda}!`);
+                showAlert(`Erro ao excluir venda ${venda?.idVenda}!`);
             }
         }
     };
@@ -49,7 +51,7 @@ export const VendaCard: React.FC<VendaCardProps> = ({ venda, deleteProdutosBtn }
     }
 
     return (
-        <div className={`rounded-2xl w-full mx-2 sm:mx-0 sm:w-96 min-h-72 bg-gray-800 flex flex-col justify-between items-center shadow-lg shadow-gray-700`}>
+        <div className={`rounded-2xl w-80 mx-2 sm:mx-0 sm:w-96 min-h-72 bg-gray-800 flex flex-col justify-between items-center shadow-lg shadow-slate-300/20`}>
 
             <div className="w-full rounded-t-2xl flex h-12 justify-around items-center p-2 bg-amber-100">
                 <div className="h-full flex items-center justify-center">
@@ -59,9 +61,8 @@ export const VendaCard: React.FC<VendaCardProps> = ({ venda, deleteProdutosBtn }
                 <h3 className="text-lg text-center font-semibold text-gray-600">{venda.idVenda}</h3>
             </div>
 
-
-            <div className="flex flex-col justify-center items-center gap-4 mt-4 p-1 w-full">
-                <div className="h-full flex items-center justify-center p-2 gap-4">
+            <div className="flex flex-col justify-center items-center gap-4 mt-4 px-2">
+                <div className="h-full flex items-center justify-center p-1 gap-4">
                     <FaShoppingCart size={24} className="text-amber-100" />
                     <h3 className="text-xl font-thin text-amber-100">Produtos {`(${venda.itensVenda.length})`}</h3>
                 </div>
@@ -107,8 +108,8 @@ export const VendaCard: React.FC<VendaCardProps> = ({ venda, deleteProdutosBtn }
                 </div>
             </div>
 
-            <div className="flex flex-col justify-center items-center text-center my-4 w-full">
-                <div className="flex justify-center p-2 ml-3 gap-2">
+            <div className="flex flex-col justify-center items-center text-center my-4">
+                <div className="flex justify-center p-2 gap-2">
                     <FaCalendar size={24} className="text-amber-100" />
                     <p className="text-md px-1 text-amber-100 font-thin">Data de criação</p>
                 </div>
@@ -134,6 +135,7 @@ export const VendaCard: React.FC<VendaCardProps> = ({ venda, deleteProdutosBtn }
                     <p className="text-md font-semibold text-gray-800">Excluir</p>
                 </div>
             </div>
+
         </div >
     );
 };

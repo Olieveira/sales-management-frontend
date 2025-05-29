@@ -1,10 +1,11 @@
 import React from 'react';
-import Header from '../layouts/Header';
 import { getProduto, Produto } from '../services/produtoService';
 import { FaSave } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { updateProduto } from '../services/produtoService';
+import { useAlert } from '../components/AlertContext';
+import { motion } from 'framer-motion';
 
 interface EditFormProps {
     id?: Number;
@@ -24,6 +25,7 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
     });
     const [originalProduto, setOriginalProduto] = useState<Produto>();
 
+    const showAlert = useAlert();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -36,7 +38,7 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                 }
             } catch (error) {
                 navigate("/produtos");
-                window.alert("Erro ao buscar produto");
+                showAlert("Erro ao buscar produto");
             }
         };
         fetchProduto();
@@ -54,26 +56,29 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
         e.preventDefault();
 
         if (originalProduto === produto) {
-            alert('Nenhuma alteração realizada!');
+            showAlert('Nenhuma alteração realizada!');
             return;
         };
 
         const resultado = await updateProduto(Number(produto?.idProduto), produto as Produto);
         if (resultado && resultado.success) {
-            alert(`Produto ${produto?.idProduto} - ${produto?.nome} atualizado com sucesso!`);
+            showAlert(`Produto ${produto?.idProduto} - ${produto?.nome} atualizado com sucesso!`);
             navigate('/produtos');
-            window.location.reload();
+            setTimeout(() => window.location.reload(), 2500)
         } else {
             console.error('Erro ao atualizar o produto: ', produto?.nome);
-            alert(`Erro ao atualizar o produto ${produto?.nome}!\n${resultado.error || 'Erro desconhecido'}`);
+            showAlert(`Erro ao atualizar o produto ${produto?.nome}!\n${resultado.error || 'Erro desconhecido'}`);
         }
     };
 
     return (
-        <div className='bg-gray-700 h-screen'>
-            <Header />
-            <div className='flex flex-col mt-6 justify-center items-center p-4'>
-                <form onSubmit={handleSubmit} className='bg-gray-900 p-6 rounded shadow-2xl w-full max-w-lg shadow-gray-900'>
+        <motion.div className='min-h-full'
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+        >
+            <div className='flex flex-col justify-center items-center p-4'>
+                <form onSubmit={handleSubmit} className='bg-gray-900 p-6 rounded w-full max-w-lg shadow-slate-400/10  shadow-lg'>
                     <div className='flex justify-between items-center w-full'>
                         <h2 className='text-2xl text-amber-100 font-semibold mb-4'>Editar Produto</h2>
                         <span className='flex justify-center items-center text-center rounded-full p-1 w-8 h-8 hover:w-9 hover:h-9 transition-all linear cursor-pointer  bg-amber-100 text-gray-700 font-semibold text-2xl'>{produto?.idProduto}</span>
@@ -212,6 +217,7 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                     </div>
                 </form>
             </div>
-        </div>
+
+        </motion.div>
     );
 };
