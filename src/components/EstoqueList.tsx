@@ -5,6 +5,7 @@ import { FaClone, FaEdit, FaEye, FaPlusCircle, FaTrash, FaWindowClose } from 're
 import { Fornecedor } from '../services/fornecedorService';
 import { useNavigate } from 'react-router-dom';
 import { useAlert } from './AlertContext';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface EstoqueListProps {
     estoque: Estoque[];
@@ -16,26 +17,9 @@ export const EstoqueList: React.FC<EstoqueListProps> = ({ estoque, id }) => {
     const [selectedItem, setSelectedItem] = useState<Estoque | null>(null);
     const [selectedItemMode, setSelectedItemMode] = useState<string>('edit');
     const { data: fornecedores } = useFornecedor();
-    const [alert, setAlert] = useState<{ show: boolean, msg: string, duration: number }>({ show: false, msg: "", duration: 3000 })
 
     const showAlert = useAlert();
     const navigate = useNavigate();
-
-    useEffect(() => {
-        if (!alert.show) return
-
-        const maxDuration = alert.duration > 1800000 ? 1800000 : alert.duration
-
-        const timeout = setTimeout(() => {
-            setAlert((prev) => ({ ...prev, show: false }));
-        }, maxDuration);
-
-        return () => clearTimeout(timeout);
-    }, [alert.msg, alert.show])
-
-    useEffect(() => {
-        console.log("Selected Item alterado:\n", selectedItem);
-    }, [selectedItem])
 
     useEffect(() => {
         if (id !== undefined) {
@@ -113,8 +97,6 @@ export const EstoqueList: React.FC<EstoqueListProps> = ({ estoque, id }) => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
 
-        console.log("HandleChange:\nname:\n", name, "\nvalue:\n", value);
-
         setSelectedItem((prev) => ({
             ...(prev as Estoque),
             [name]: [value],
@@ -123,8 +105,6 @@ export const EstoqueList: React.FC<EstoqueListProps> = ({ estoque, id }) => {
 
     const handleSubmitCreate = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        console.log("Estado do item selecionado no momento do submit:\n", selectedItem)
 
         if (!selectedItem?.nome || selectedItem.quantidade == null || selectedItem.unidade === "" ||
             selectedItem.estoqueMin == null || !selectedItem.criadoEm || !selectedItem.fornecedor.nome) {
@@ -222,7 +202,14 @@ export const EstoqueList: React.FC<EstoqueListProps> = ({ estoque, id }) => {
                 </thead>
                 <tbody>
                     {estoque.map((item, i) => (
-                        <tr key={item.idMaterial} className={`hover:bg-gray-700 ${i % 2 == 0 ? 'bg-gray-800' : 'bg-gray-700'}`}>
+                        <motion.tr
+                            key={item.idMaterial}
+                            className={`hover:bg-gray-700 ${i % 2 == 0 ? 'bg-gray-800' : 'bg-gray-700'}`}
+                            initial={{ x: -100, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            exit={{ x: -100, opacity: 0 }}
+                            transition={{ duration: 0.4, ease: 'easeInOut', type: 'spring', delay: Number('0.' + i) }}
+                        >
                             <td className="border sm:px-4 px-2 py-2">{item.nome}</td>
                             <td className="border sm:px-4 px-2 py-2">{item.quantidade}</td>
                             <td className="border px-4 py-2 hidden sm:table-cell">{item.estoqueMin}</td>
@@ -252,15 +239,20 @@ export const EstoqueList: React.FC<EstoqueListProps> = ({ estoque, id }) => {
                                     <FaTrash />
                                 </button>
                             </td>
-                        </tr>
+                        </motion.tr>
                     ))}
                 </tbody>
             </table>
             {/* form CRUD */}
-            {
-                selectedItem && (
-                    <div className="fixed inset-0 bg-black/70 bg-opacity-50 flex justify-center items-center px-5">
 
+            <AnimatePresence>
+                {selectedItem && (
+                    <motion.div className="fixed inset-0 bg-black/70 bg-opacity-50 flex justify-center items-center px-5"
+                        initial={{ y: -100, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: -100, opacity: 0 }}
+                        transition={{ duration: 0.4, ease: 'easeInOut', type: 'spring' }}
+                    >
                         <FaWindowClose size={28}
                             className='cursor-pointer fixed top-5 w-auto bg-red-200 p-0.5 rounded-full text-gray-800'
                             onClick={() => {
@@ -386,9 +378,10 @@ export const EstoqueList: React.FC<EstoqueListProps> = ({ estoque, id }) => {
                                 </div>
                             </form>
                         </div>
-                    </div>
+                    </motion.div>
                 )
-            }
+                }
+            </AnimatePresence>
 
         </div >
     );

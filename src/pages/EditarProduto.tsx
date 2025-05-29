@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { updateProduto } from '../services/produtoService';
 import { useAlert } from '../components/AlertContext';
+import { motion } from 'framer-motion';
 
 interface EditFormProps {
     id?: Number;
@@ -71,7 +72,11 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
     };
 
     return (
-        <div className='min-h-full'>
+        <motion.div className='min-h-full'
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+        >
             <div className='flex flex-col justify-center items-center p-4'>
                 <form onSubmit={handleSubmit} className='bg-gray-900 p-6 rounded w-full max-w-lg shadow-slate-400/10  shadow-lg'>
                     <div className='flex justify-between items-center w-full'>
@@ -213,6 +218,6 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                 </form>
             </div>
 
-        </div>
+        </motion.div>
     );
 };

@@ -10,6 +10,7 @@ import { useStatus } from '../hooks/useStatus';
 import { usePlataformas } from '../hooks/usePlataformas';
 import { createItensVenda, ItemVenda } from '../services/itensVendaService';
 import { useAlert } from '../components/AlertContext'
+import { motion } from 'framer-motion';
 
 interface CreateFormProps {
     id?: Number;
@@ -99,8 +100,6 @@ export const NewVendaForm: React.FC<CreateFormProps> = ({ id }) => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        console.log("Venda recebida do form para criação:\n", venda)
-
         if (venda.itensVenda?.length <= 0 || !venda.nomeComprador || !venda.total || !venda.criadoEm) {
             showAlert('Preencha todos os campos e adicione pelo menos um produto!');
             return;
@@ -119,8 +118,6 @@ export const NewVendaForm: React.FC<CreateFormProps> = ({ id }) => {
                 total: venda.total,
                 criadoEm: venda.criadoEm
             } as Venda);
-
-            console.log("Venda response no Criar Venda:\n", vendaResponse)
 
             const itensVendaPromises = produtos.map((produto) =>
                 createItensVenda({
@@ -154,7 +151,11 @@ export const NewVendaForm: React.FC<CreateFormProps> = ({ id }) => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center">
+        <motion.div className="min-h-screen flex items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+        >
             <form onSubmit={handleSubmit} className="bg-gray-900 p-3 rounded-lg shadow-lg w-full max-w-2xl">
                 <h2 className="text-3xl font-bold mb-6 text-amber-100 text-center">Nova Venda</h2>
 
@@ -308,6 +309,6 @@ export const NewVendaForm: React.FC<CreateFormProps> = ({ id }) => {
                 )}
             </form>
 
-        </div>
+        </motion.div>
     );
 };

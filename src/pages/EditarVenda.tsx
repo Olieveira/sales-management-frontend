@@ -10,6 +10,7 @@ import { useStatus } from '../hooks/useStatus';
 import { usePlataformas } from '../hooks/usePlataformas';
 import { createItensVenda, deleteItensVenda, ItemVenda, updateItensVenda } from '../services/itensVendaService';
 import { useAlert } from '../components/AlertContext';
+import { motion } from 'framer-motion';
 
 interface EditFormProps {
     id?: Number;
@@ -118,8 +119,6 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
             return;
         };
 
-        console.log("Venda antes do update:\n", venda);
-
         const resultadoVenda = await updateVenda(Number(venda?.idVenda), {
             idVenda: venda.idVenda,
             nomeComprador: venda.nomeComprador,
@@ -139,7 +138,6 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
 
             for (const item of itensToDelete) {
                 try {
-                    console.log("Excluindo item:\n", item);
                     await deleteItensVenda(venda.idVenda, item.produto.idProduto);
                 } catch (error) {
                     console.error(`Erro ao excluir item ${item.produto.idProduto}:`, error);
@@ -154,7 +152,6 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                 if (produtoBuscado) {
                     if (produtoBuscado.quantidade !== produto.quantidade) {
                         try {
-                            console.log("Atualizando produto:\n", produtoBuscado);
                             await updateItensVenda({
                                 idProduto: produto.produto.idProduto,
                                 idVenda: venda.idVenda,
@@ -167,7 +164,6 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                     }
                 } else {
                     try {
-                        console.log("Criando produto:\n", produto);
                         await createItensVenda({
                             idProduto: produto.produto.idProduto,
                             idVenda: venda.idVenda,
@@ -192,7 +188,11 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
     };
 
     return (
-        <div className='bg-gray-700 h-screen relative'>
+        <motion.div className='bg-gray-700 h-screen relative'
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+        >
             <div className='flex flex-col mt-6 justify-center items-center sm:p-4'>
                 <form onSubmit={handleSubmit} className='bg-gray-900 rounded shadow-2xl w-full max-w-lg shadow-gray-900 relative flex flex-col justify-center items-center'>
                     <div className='flex justify-between items-center w-full bg-gray-800 rounded rounded-b-2xl px-5 py-2 shadow-gray-900 shadow-md'>
@@ -360,6 +360,6 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                 </form>
             </div>
 
-        </div>
+        </motion.div>
     );
 };

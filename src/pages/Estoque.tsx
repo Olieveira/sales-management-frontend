@@ -1,6 +1,7 @@
 import { useEstoque } from '../hooks/useEstoque';
 import { Loading } from '../components/Loading';
 import { EstoqueList } from '../components/EstoqueList';
+import { motion } from 'framer-motion';
 
 interface EstoqueProps {
     id?: number
@@ -21,7 +22,11 @@ export const Estoque: React.FC<EstoqueProps> = ({ id }) => {
     );
 
     return (
-        <div className='min-h-screen'>
+        <motion.div className='min-h-screen'
+        initial={{opacity: 0}}
+        animate={{opacity: 1}}
+        exit={{opacity: 0}}
+        >
             <div className='flex-col justify-center items-center pb-2'>
                 <div className="flex flex-col items-center justify-center">
                     <div className='flex w-full justify-center items-center'>
@@ -34,7 +39,7 @@ export const Estoque: React.FC<EstoqueProps> = ({ id }) => {
                     )}
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 };
 

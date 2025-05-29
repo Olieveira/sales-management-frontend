@@ -1,6 +1,7 @@
 import { FaExclamationTriangle } from "react-icons/fa";
 import { Produto } from "../services/produtoService";
 import { ProdutoCard, ProdutoListItem, SelectProdutoListItem } from "./Produto";
+import { AnimatePresence } from "framer-motion";
 
 interface ProdutosListProps {
     produtos: Array<{ produto: Produto, quantidade?: number }>;
@@ -39,7 +40,11 @@ const ProdutosList: React.FC<ProdutosListProps> = ({ produtos, card, list, selec
     return (
         <div className={`flex flex-wrap gap-4 justify-center items-center w-full`}>
             {produtos.length > 0 ? produtos.map((produto) => {
-                return renderProduto(formatRender(produto), produto.quantidade);
+                return (
+                    <AnimatePresence>
+                        {renderProduto(formatRender(produto), produto.quantidade)}
+                    </AnimatePresence>
+                );
             }) : (<div className="w-full rounded-lg flex flex-col justify-center items-center bg-gray-800 p-2">
                 <FaExclamationTriangle size={24} className="text-red-200 animate-pulse" />
                 <p className="text-lg text-amber-100 p-2 text-center">Nenhum produto registrado!</p>

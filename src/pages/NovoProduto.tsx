@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { getProduto } from '../services/produtoService';
 import { useAlert } from '../components/AlertContext';
+import { motion } from 'framer-motion';
 
 interface CreateFormProps {
     id?: number;
@@ -67,8 +68,6 @@ export const CreateForm: React.FC<CreateFormProps> = ({ id }) => {
             estoqueUn: Number(formProduto.estoqueUn),
         };
 
-        console.log("Produto ajustado antes da solicitação de criação:\n", produtoAjustado);
-
         const resultado = await createProduto(produtoAjustado);
 
         if (resultado && !resultado.error) {
@@ -82,7 +81,12 @@ export const CreateForm: React.FC<CreateFormProps> = ({ id }) => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center">
+        <motion.div className="min-h-screen flex items-center justify-center"
+        initial={{opacity: 0}}
+        animate={{opacity: 1}}
+        exit={{opacity: 0}}
+        transition={{duration: 0.4}}
+        >
             <form onSubmit={handleSubmit} className="bg-gray-900 p-8 rounded-lg shadow-lg w-full m-2 max-w-lg">
                 <div className='relative w-full'>
                     <div>
@@ -224,6 +228,6 @@ export const CreateForm: React.FC<CreateFormProps> = ({ id }) => {
                 </div>
             </form>
 
-        </div>
+        </motion.div>
     );
 };
