@@ -10,7 +10,7 @@ import { useStatus } from '../hooks/useStatus';
 import { usePlataformas } from '../hooks/usePlataformas';
 import { createItensVenda, deleteItensVenda, ItemVenda, updateItensVenda } from '../services/itensVendaService';
 import { useAlert } from '../components/AlertContext';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface EditFormProps {
     id?: Number;
@@ -188,7 +188,7 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
     };
 
     return (
-        <motion.div className='bg-gray-700 h-screen relative'
+        <motion.div className='min-h-screen relative'
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -331,32 +331,43 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                             <FaSave className='mr-2' /> Salvar
                         </button>
                     </div>
-                    {selectProduto && (
-                        <div className='fixed top-0 gap-5 flex flex-col justify-center items-center min-w-full min-h-full rounded-2xl bg-gray-800/90 z-10'>
-                            <div className='flex justify-around items-center gap-5 pt-3'>
-                                <FaCubes size={28} className='text-amber-100' />
-                                <h3 className='text-amber-100 text-2xl'>Selecione o produto</h3>
-                            </div>
-                            <div className='p-4 w-4/5 overflow-x-scroll flex justify-start items-center rounded-2xl bg-amber-100'>
-                                {todosProdutos && todosProdutos.length > 0 ? (
-                                    <ProdutosList
-                                        selectItem
-                                        produtos={todosProdutos
-                                            .filter(produto => produto.ativo && !produtos.some(p => p.produto.idProduto === produto.idProduto))
-                                            .map(produto => ({ produto }))}
-                                        onSelectItem={handleAddNewProduct}
-                                    />
-                                ) : (
-                                    <div className='text-lg w-full text-gray-900 text-center flex justify-center items-center'>
-                                        Nenhum produto encontrado!
-                                    </div>
-                                )}
-                            </div>
-                            <div onClick={() => setSelectProduto(!selectProduto)} className='cursor-pointer absolute px-1 p-0.5 rounded-sm bg-amber-100 top-3 right-3 animate-pulse'>
-                                <FaWindowClose size={28} className='text-gray-800' />
-                            </div>
-                        </div>
-                    )}
+
+                    <AnimatePresence>
+                        {selectProduto && (
+                            <motion.div className="fixed inset-0 flex flex-col justify-center items-center min-w-full min-h-full bg-gray-950/95 z-30"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                            >
+                                <div className="flex justify-around items-center gap-5 mb-4">
+                                    <FaCubes size={28} className="text-amber-100" />
+                                    <h3 className="text-amber-100 text-2xl font-bold drop-shadow">Selecione o produto</h3>
+                                </div>
+                                <div className="p-6 w-full max-w-2xl max-h-[60vh] overflow-y-auto flex justify-start items-center rounded-2xl bg-gray-900 shadow-2xl border-2 border-amber-100">
+                                    {todosProdutos && todosProdutos.length > 0 ? (
+                                        <ProdutosList
+                                            selectItem
+                                            produtos={todosProdutos
+                                                .filter(produto => produto.ativo && !produtos.some(p => p.produto.idProduto === produto.idProduto))
+                                                .map(produto => ({ produto }))}
+                                            onSelectItem={handleAddNewProduct}
+                                        />
+                                    ) : (
+                                        <div className="text-lg w-full text-amber-100 text-center flex justify-center items-center">
+                                            Nenhum produto encontrado!
+                                        </div>
+                                    )}
+                                </div>
+                                <button
+                                    onClick={() => setSelectProduto(!selectProduto)}
+                                    className="absolute top-6 right-6 px-2 py-1 rounded-full bg-amber-100 hover:bg-amber-200 transition text-gray-900 shadow-lg animate-pulse"
+                                    aria-label="Fechar seleção de produto"
+                                >
+                                    <FaWindowClose size={28} />
+                                </button>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </form>
             </div>
 

@@ -9,8 +9,8 @@ import { useProdutos } from '../hooks/useProdutos';
 import { useStatus } from '../hooks/useStatus';
 import { usePlataformas } from '../hooks/usePlataformas';
 import { createItensVenda, ItemVenda } from '../services/itensVendaService';
-import { useAlert } from '../components/AlertContext'
-import { motion } from 'framer-motion';
+import { useAlert, useSelectAlert } from '../components/AlertContext'
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface CreateFormProps {
     id?: Number;
@@ -25,6 +25,7 @@ export const NewVendaForm: React.FC<CreateFormProps> = ({ id }) => {
     const { data: status } = useStatus();
     const { data: plataformas } = usePlataformas();
 
+    const startSelectAlert = useSelectAlert();
     const showAlert = useAlert();
     const navigate = useNavigate();
 
@@ -61,10 +62,14 @@ export const NewVendaForm: React.FC<CreateFormProps> = ({ id }) => {
         setProdutos(newProdutos);
     };
 
-    const handleAddNewProduct = (produto: Produto) => {
-        const quantidade = parseInt(prompt("Digite a quantidade do produto:", "1") || "0", 10);
-        setProdutos([...produtos, { produto, quantidade }]);
-        setSelectProduto(!selectProduto);
+    const handleAddNewProduct = async (produto: Produto) => {
+        const quantidade = Number(await startSelectAlert("Informe a quantidade comprada:", 'number'))
+
+        if (Number.isInteger(quantidade)) {
+            setProdutos([...produtos, { produto, quantidade }])
+            setSelectProduto(false)
+        }
+
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -156,7 +161,7 @@ export const NewVendaForm: React.FC<CreateFormProps> = ({ id }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
         >
-            <form onSubmit={handleSubmit} className="bg-gray-900 p-3 rounded-lg shadow-lg w-full max-w-2xl">
+            <form onSubmit={handleSubmit} className="bg-gray-900 p-3 rounded-lg w-full max-w-2xl shadow-lg shadow-slate-300/10">
                 <h2 className="text-3xl font-bold mb-6 text-amber-100 text-center">Nova Venda</h2>
 
                 <div className={`sm:mb-8 mb-4 flex flex-col justify-center items-center`}>
@@ -281,32 +286,43 @@ export const NewVendaForm: React.FC<CreateFormProps> = ({ id }) => {
                         <FaSave className='mr-2' /> Salvar
                     </button>
                 </div>
-                {selectProduto && (
-                    <div className='fixed left-0 top-0 flex flex-col justify-center items-center min-w-full min-h-full bg-gray-800/90 z-20'>
-                        <div className='flex justify-around items-center gap-5 mb-4'>
-                            <FaCubes size={28} className='text-amber-100' />
-                            <h3 className='text-amber-100 text-2xl'>Selecione o produto</h3>
-                        </div>
-                        <div className='p-4 w-4/5 overflow-y-auto flex justify-start items-center rounded-2xl bg-amber-100'>
-                            {todosProdutos && todosProdutos.length > 0 ? (
-                                <ProdutosList
-                                    selectItem
-                                    produtos={todosProdutos
-                                        .filter(produto => produto.ativo && !produtos.some(p => p.produto.idProduto === produto.idProduto))
-                                        .map(produto => ({ produto }))}
-                                    onSelectItem={handleAddNewProduct}
-                                />
-                            ) : (
-                                <div className='text-lg w-full text-gray-900 text-center flex justify-center items-center'>
-                                    Nenhum produto encontrado!
-                                </div>
-                            )}
-                        </div>
-                        <div onClick={() => setSelectProduto(!selectProduto)} className='cursor-pointer absolute px-1 p-0.5 rounded-sm bg-amber-100 top-3 right-3 animate-pulse'>
-                            <FaWindowClose size={28} className='text-gray-800' />
-                        </div>
-                    </div>
-                )}
+
+                <AnimatePresence>
+                    {selectProduto && (
+                        <motion.div className="fixed inset-0 flex flex-col justify-center items-center min-w-full min-h-full bg-gray-950/95 z-10"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                        >
+                            <div className="flex justify-around items-center gap-5 mb-4">
+                                <FaCubes size={28} className="text-amber-100" />
+                                <h3 className="text-amber-100 text-2xl font-bold drop-shadow">Selecione o produto</h3>
+                            </div>
+                            <div className="p-6 w-full max-w-2xl max-h-[60vh] overflow-y-auto flex justify-start items-center rounded-2xl bg-gray-900 shadow-2xl border-2 border-amber-100">
+                                {todosProdutos && todosProdutos.length > 0 ? (
+                                    <ProdutosList
+                                        selectItem
+                                        produtos={todosProdutos
+                                            .filter(produto => produto.ativo && !produtos.some(p => p.produto.idProduto === produto.idProduto))
+                                            .map(produto => ({ produto }))}
+                                        onSelectItem={handleAddNewProduct}
+                                    />
+                                ) : (
+                                    <div className="text-lg w-full text-amber-100 text-center flex justify-center items-center">
+                                        Nenhum produto encontrado!
+                                    </div>
+                                )}
+                            </div>
+                            <button
+                                onClick={() => setSelectProduto(!selectProduto)}
+                                className="absolute top-6 right-6 px-2 py-1 cursor-pointer transition text-red-300 shadow-lg animate-pulse"
+                                aria-label="Fechar seleção de produto"
+                            >
+                                <FaWindowClose size={28} />
+                            </button>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </form>
 
         </motion.div>

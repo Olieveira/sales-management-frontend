@@ -149,7 +149,7 @@ export const SelectProdutoListItem: React.FC<SelectProdutoListItem> = ({ produto
             </div>
             {produto && onSelectItem && (
                 <div className={`absolute flex justify-center items-center -bottom-3 rounded-full ${produto.ativo ? 'bg-gray-800' : 'bg-rose-950'} p-1 transition-all duration-200`}>
-                    <FaPlusCircle onClick={() => onSelectItem(produto)} size={24} className="text-amber-100" />
+                    <FaPlusCircle onClick={async () => onSelectItem(produto)} size={24} className="text-amber-100" />
                 </div>
             )}
         </div >
