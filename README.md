@@ -6,6 +6,7 @@ Este é um projeto pessoal desenvolvido com o objetivo de criar uma aplicação 
 
 - **Gerenciamento de Produtos**: Criação, edição, ativação/inativação e listagem de produtos.
 - **Gerenciamento de Vendas**: Criação, edição, exclusão e listagem de vendas, incluindo a associação de produtos às vendas.
+- **Gerenciamento de estoque**: Criação, edição, exclusão e listagem de materiais.
 - **Interface Responsiva**: Design adaptado para diferentes tamanhos de tela.
 - **Feedback ao Usuário**: Mensagens de erro e sucesso para ações realizadas.
 
@@ -18,6 +19,7 @@ Este é um projeto pessoal desenvolvido com o objetivo de criar uma aplicação 
   - TailwindCSS para estilização
   - Axios para requisições HTTP
   - React Icons para ícones
+  - Framer Motion para animações
 
 - **Backend** (não incluído neste repositório):
     - Desenvolvido com Node.js, Express, Prisma e MySQL.
@@ -26,19 +28,19 @@ Este é um projeto pessoal desenvolvido com o objetivo de criar uma aplicação 
 
 ## 📦 Estrutura do Projeto
 
-- **src/components**: Componentes reutilizáveis, como listas e cartões de produtos e vendas.
-- **src/pages**: Páginas principais da aplicação, como Produtos, Vendas, e formulários de criação/edição.
+- **src/components**: Componentes reutilizáveis.
+- **src/pages**: Páginas principais da aplicação.
 - **src/services**: Serviços para comunicação com a API.
 - **src/hooks**: Hooks personalizados para gerenciamento de dados.
-- **src/layouts**: Layouts compartilhados, como o cabeçalho.
+- **src/layouts**: Layouts compartilhados.
 - **src/routes.tsx**: Configuração das rotas da aplicação.
 
 ## ⚙️ Instalação e Execução
 
 1. **Clone o repositório**:
    ```bash
-   git clone https://github.com/seu-usuario/gerenciador-de-vendas.git
-   cd gerenciador-de-vendas
+   git clone https://github.com/Olieveira/sales-management-frontend.git
+   cd sales-management-frontend
    ```
 
 2. **Instale as dependências**:
@@ -60,8 +62,15 @@ Este é um projeto pessoal desenvolvido com o objetivo de criar uma aplicação 
 ## 📝 Observações Importantes
 
 - **Projeto Acadêmico**: Este projeto pode não atender a todos os padrões de produção.
-- **Segurança**: Certifique-se de revisar e remover quaisquer informações sensíveis antes de tornar o repositório público.
+
+## 📌 Próximas funcionalidades:
+
+- **Fornecedores**: Página e respectivas funções para gestão do cadastro de fornecedores.
+- **Fabricação**: Página para gerir processos de fabricação e materiais utilizados.
+
+---
+
 - **Licença**: Este projeto está licenciado sob a [Creative Commons BY-NC 4.0](LICENSE), permitindo uso não comercial com atribuição.
 
 
-**Autor**: Nathan Oliveira  
+**Autor**: [Nathan Oliveira](https://github.com/olieveira)  

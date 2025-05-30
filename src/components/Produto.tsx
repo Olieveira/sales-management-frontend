@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Produto, inativarProduto, ativarProduto } from "../services/produtoService";
 import { FaCommentDots, FaRulerCombined, FaShoppingBag, FaCalendar, FaCoins, FaCubes, FaBoxes, FaTrash, FaPlusCircle } from "react-icons/fa";
-import { useAlert } from "./AlertContext";
+import { useAlert, useSelectAlert } from "./AlertContext";
 import { motion } from "framer-motion";
 
 interface ProdutoCardProps {
@@ -10,12 +10,10 @@ interface ProdutoCardProps {
 }
 
 export const ProdutoCard: React.FC<ProdutoCardProps> = ({ produto }) => {
-
+    const startSelectAlert = useSelectAlert();
     const showAlert = useAlert();
     const handleTrocarStatus = async (idProduto: number, produto: Produto) => {
-        const confirmacao = window.confirm(`Tem certeza que deseja ${produto.ativo ? 'inativar' : 'ativar'} o produto ${produto.nome} ?`);
-
-        if (confirmacao) {
+        if (await startSelectAlert(`Tem certeza que deseja ${produto.ativo ? 'inativar' : 'ativar'} o produto ${produto.nome} ?`, "boolean")) {
             try {
                 const resultado = produto.ativo ? await inativarProduto(idProduto) : await ativarProduto(idProduto);
 
@@ -149,7 +147,7 @@ export const SelectProdutoListItem: React.FC<SelectProdutoListItem> = ({ produto
             </div>
             {produto && onSelectItem && (
                 <div className={`absolute flex justify-center items-center -bottom-3 rounded-full ${produto.ativo ? 'bg-gray-800' : 'bg-rose-950'} p-1 transition-all duration-200`}>
-                    <FaPlusCircle onClick={() => onSelectItem(produto)} size={24} className="text-amber-100" />
+                    <FaPlusCircle onClick={async () => onSelectItem(produto)} size={24} className="text-amber-100" />
                 </div>
             )}
         </div >
