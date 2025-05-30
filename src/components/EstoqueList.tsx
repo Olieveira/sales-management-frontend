@@ -4,7 +4,7 @@ import { useFornecedor } from '../hooks/useFornecedor';
 import { FaClone, FaEdit, FaEye, FaPlusCircle, FaTrash, FaWindowClose } from 'react-icons/fa';
 import { Fornecedor } from '../services/fornecedorService';
 import { useNavigate } from 'react-router-dom';
-import { useAlert } from './AlertContext';
+import { useAlert, useSelectAlert } from './AlertContext';
 import { AnimatePresence, motion } from 'framer-motion';
 
 interface EstoqueListProps {
@@ -18,6 +18,7 @@ export const EstoqueList: React.FC<EstoqueListProps> = ({ estoque, id }) => {
     const [selectedItemMode, setSelectedItemMode] = useState<string>('edit');
     const { data: fornecedores } = useFornecedor();
 
+    const startSelectAlert = useSelectAlert();
     const showAlert = useAlert();
     const navigate = useNavigate();
 
@@ -125,7 +126,7 @@ export const EstoqueList: React.FC<EstoqueListProps> = ({ estoque, id }) => {
     }
 
     const handleDelete = async (idMaterial: number, nome: string) => {
-        if (window.confirm(`Tem certeza que deseja excluir o material (${nome})?`)) {
+        if (await startSelectAlert(`Tem certeza que deseja excluir o material (${nome})?`, 'boolean')) {
             try {
                 const result = await deleteEstoque(idMaterial);
                 if (result.success) {

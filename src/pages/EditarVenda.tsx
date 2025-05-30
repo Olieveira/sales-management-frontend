@@ -9,7 +9,7 @@ import { useProdutos } from '../hooks/useProdutos';
 import { useStatus } from '../hooks/useStatus';
 import { usePlataformas } from '../hooks/usePlataformas';
 import { createItensVenda, deleteItensVenda, ItemVenda, updateItensVenda } from '../services/itensVendaService';
-import { useAlert } from '../components/AlertContext';
+import { useAlert, useSelectAlert } from '../components/AlertContext';
 import { AnimatePresence, motion } from 'framer-motion';
 
 interface EditFormProps {
@@ -26,6 +26,7 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
     const { data: status } = useStatus();
     const { data: plataformas } = usePlataformas();
 
+    const startSelectAlert = useSelectAlert();
     const showAlert = useAlert();
     const navigate = useNavigate();
 
@@ -55,15 +56,17 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
         setProdutos(newProdutos);
     };
 
-    const handleAddNewProduct = (produto: Produto) => {
-        const quantidade = parseInt(prompt("Digite a quantidade do produto:", "1") || "0", 10);
-        setProdutos([...produtos, { produto, quantidade }]);
-        setSelectProduto(!selectProduto);
+    const handleAddNewProduct = async (produto: Produto) => {
+        const quantidade = Number(await startSelectAlert("Informe a quantidade comprada:", 'number'))
+
+        if (Number.isInteger(quantidade)) {
+            setProdutos([...produtos, { produto, quantidade }])
+            setSelectProduto(false)
+        }
     };
 
-
     const handleDelete = async () => {
-        if (window.confirm(`Tem certeza que deseja excluir a venda ${venda?.idVenda}?`)) {
+        if (await startSelectAlert(`Tem certeza que deseja excluir a venda ${venda?.idVenda}?`, 'boolean')) {
             try {
                 const resultado = await deleteVenda(Number(venda?.idVenda));
                 if (resultado.success) {
@@ -334,7 +337,7 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
 
                     <AnimatePresence>
                         {selectProduto && (
-                            <motion.div className="fixed inset-0 flex flex-col justify-center items-center min-w-full min-h-full bg-gray-950/95 z-30"
+                            <motion.div className="fixed inset-0 flex flex-col justify-center items-center min-w-full min-h-full bg-gray-950/95 z-10"
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}

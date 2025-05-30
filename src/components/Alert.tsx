@@ -54,13 +54,13 @@ export const AlertSelect: React.FC<AlertSelectProps> = ({ message, selectType, h
                 {selectType === 'boolean' && (
                     <div className="flex gap-4 justify-center mt-4">
                         <button
-                            className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded shadow"
+                            className="cursor-pointer bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded shadow"
                             onClick={() => handleSelect(true)}
                         >
                             Sim
                         </button>
                         <button
-                            className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded shadow"
+                            className="cursor-pointer bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded shadow"
                             onClick={() => handleSelect(false)}
                         >
                             Cancelar

@@ -1,22 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { useSelectAlert, useAlert } from "../components/AlertContext";
-
+    
 export const Home = () => {
-    const startSelectAlert = useSelectAlert();
-    const startAlert = useAlert();
-
-    const confirmTest = async (type: 'number' | 'boolean') => {
-        if (type == "number") {
-            const quantidade = await startSelectAlert("Selecione a quantidade desejada:", 'number')
-            startAlert("Valor numérico retornado:" + quantidade)
-        }
-
-        if (type == "boolean") {
-            const confirm = await startSelectAlert("Tem certeza que deseja continunar?", "boolean")
-            startAlert("Valor boolean retornado:" + confirm)
-        }
-    }
 
     return (
         <AnimatePresence>
@@ -39,18 +24,6 @@ export const Home = () => {
                     <Link to="/" className="shadow-2xl shadow-gray-800 transition-all duration-100 cursor-pointer hover:rounded-4xl hover:w-36 hover:h-36 w-32 h-32 rounded-2xl border-4 border-amber-700 bg-gray-900 flex justify-center items-center">
                         <h2 className='font-bold text-amber-100 text-lg'>Fabricação</h2>
                     </Link>
-
-                    <div className="cursor-pointer hover:rounded-4xl hover:w-36 hover:h-36 w-32 h-32 rounded-2xl bg-red-900 flex justify-center items-center"
-                        onClick={() => confirmTest("number")}
-                    >
-                        <h2 className='font-bold text-amber-100 text-lg'>Teste Num</h2>
-                    </div>
-
-                    <div className="cursor-pointer hover:rounded-4xl hover:w-36 hover:h-36 w-32 h-32 rounded-2xl bg-red-900 flex justify-center items-center"
-                        onClick={() => confirmTest("boolean")}
-                    >
-                        <h2 className='font-bold text-amber-100 text-lg'>Teste Boolean</h2>
-                    </div>
                 </motion.div>
             </div>
         </AnimatePresence>

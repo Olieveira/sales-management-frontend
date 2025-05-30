@@ -4,7 +4,7 @@ import { deleteVenda, Venda } from "../services/vendasService";
 import ProdutosList from "./ProdutosList";
 import { useEffect, useState } from "react";
 import { Produto } from "../services/produtoService";
-import { useAlert } from "./AlertContext";
+import { useAlert, useSelectAlert } from "./AlertContext";
 
 interface VendaCardProps {
     venda: Venda;
@@ -16,6 +16,7 @@ export const VendaCard: React.FC<VendaCardProps> = ({ venda, deleteProdutosBtn }
     const [produtos, setProdutos] = useState<Array<{ produto: Produto, quantidade?: number }>>()
     const [expanded, setExpanded] = useState<boolean>(false);
 
+    const startSelectAlert = useSelectAlert();
     const showAlert = useAlert();
     const navigate = useNavigate();
 
@@ -27,7 +28,7 @@ export const VendaCard: React.FC<VendaCardProps> = ({ venda, deleteProdutosBtn }
     }, [])
 
     const handleDelete = async () => {
-        if (window.confirm(`Tem certeza que deseja excluir a venda ${venda?.idVenda}?`)) {
+        if (await startSelectAlert(`Tem certeza que deseja excluir a venda ${venda?.idVenda}?`, "boolean")) {
             try {
                 const resultado = await deleteVenda(Number(venda?.idVenda));
                 if (resultado.success) {

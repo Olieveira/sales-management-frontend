@@ -111,8 +111,7 @@ export const NewVendaForm: React.FC<CreateFormProps> = ({ id }) => {
         }
 
         if (id !== undefined && JSON.stringify(vendaOriginal) === JSON.stringify(venda)) {
-            const confirm = window.confirm('Nenhuma alteração realizada, duplicar venda mesmo assim?');
-            if (!confirm) return;
+            if (!await startSelectAlert('Nenhuma alteração realizada, duplicar venda mesmo assim?', 'boolean')) return;
         }
 
         try {
@@ -143,7 +142,6 @@ export const NewVendaForm: React.FC<CreateFormProps> = ({ id }) => {
             if (vendaResponse && !itensVendaError) {
                 showAlert('Venda criada com sucesso!');
                 navigate('/vendas');
-                setTimeout(() => window.location.reload(), 2500)
             } else {
                 console.error('Erro ao criar venda ou registro dos itens!');
                 showAlert(`Erro ao criar venda ou registro dos itens!\n${vendaResponse.error || 'Erro desconhecido'}`);
