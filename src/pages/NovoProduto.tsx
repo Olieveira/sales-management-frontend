@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { getProduto } from '../services/produtoService';
 import { useAlert } from '../components/AlertContext';
 import { motion } from 'framer-motion';
+import { useCategorias } from '../hooks/useCategorias';
 
 interface CreateFormProps {
     id?: number;
@@ -14,8 +15,15 @@ interface CreateFormProps {
 export const CreateForm: React.FC<CreateFormProps> = ({ id }) => {
 
     const [formProduto, setFormProduto] = useState<Produto>({} as Produto);
+    const { data: categorias, isLoading, error } = useCategorias();
     const navigate = useNavigate();
     const showAlert = useAlert();
+
+    // teste
+    useEffect(() => {
+        console.log("categorias alterada:\n", categorias)
+    }, [categorias])
+    // teste
 
     useEffect(() => {
         const fetchProduto = async () => {
@@ -82,10 +90,10 @@ export const CreateForm: React.FC<CreateFormProps> = ({ id }) => {
 
     return (
         <motion.div className="min-h-screen flex items-center justify-center"
-        initial={{opacity: 0}}
-        animate={{opacity: 1}}
-        exit={{opacity: 0}}
-        transition={{duration: 0.4}}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
         >
             <form onSubmit={handleSubmit} className="bg-gray-900 p-8 rounded-lg shadow-lg w-full m-2 max-w-lg">
                 <div className='relative w-full'>
@@ -107,19 +115,43 @@ export const CreateForm: React.FC<CreateFormProps> = ({ id }) => {
                         className='shadow appearance-none border border-amber-100 rounded w-full py-2 px-3 text-white bg-gray-950 leading-tight focus:outline-none focus:shadow-outline'
                     />
                 </div>
+                <div className='flex flex-row flex-wrap sm:justify-between justify-center items-center gap-2 mb-4'>
+                    <div>
+                        <label className='block text-center sm:text-left text-amber-100 text-sm font-bold mb-2' htmlFor='nome'>
+                            Unidade
+                        </label>
+                        <input
+                            type='text'
+                            id='unidade'
+                            name='unidade'
+                            value={formProduto.unidade}
+                            onChange={handleChange}
+                            className='shadow appearance-none border border-amber-100 rounded w-full py-2 px-3 text-white bg-gray-950 leading-tight focus:outline-none focus:shadow-outline'
+                        />
+                    </div>
+                    <div>
 
-                <label className='block text-amber-100 text-sm font-bold mb-2' htmlFor='nome'>
-                    Unidade
-                </label>
-                <div className='mb-4'>
-                    <input
-                        type='text'
-                        id='unidade'
-                        name='unidade'
-                        value={formProduto.unidade}
-                        onChange={handleChange}
-                        className='shadow appearance-none border border-amber-100 rounded w-full py-2 px-3 text-white bg-gray-950 leading-tight focus:outline-none focus:shadow-outline'
-                    />
+                        {/* Categorias */}
+                        <label className='block text-center sm:text-left text-amber-100 text-sm font-bold mb-2' htmlFor='categorias'>
+                            Categoria
+                        </label>
+                        <select
+                            id="categorias"
+                            name="categorias"
+                            className="shadow appearance-none border border-amber-100 rounded w-full py-2 px-3 text-white bg-gray-950 leading-tight focus:outline-none focus:shadow-outline"
+                        >
+                            <option value="">Selecione uma categoria</option>
+                            {(categorias && categorias.length > 0) && (
+                                categorias.map((categoria, i) => (
+
+                                    <option key={i + "-" + categoria}
+                                        value={categoria.nome}>{categoria.nome}
+                                    </option>
+
+                                ))
+                            )}
+                        </select>
+                    </div>
                 </div>
 
                 <div className='mb-4'>
@@ -228,6 +260,6 @@ export const CreateForm: React.FC<CreateFormProps> = ({ id }) => {
                 </div>
             </form>
 
-        </motion.div>
+        </motion.div >
     );
 };
