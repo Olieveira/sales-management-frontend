@@ -13,17 +13,10 @@ interface CreateFormProps {
 }
 
 export const CreateForm: React.FC<CreateFormProps> = ({ id }) => {
-
-    const [formProduto, setFormProduto] = useState<Produto>({} as Produto);
-    const { data: categorias, isLoading, error } = useCategorias();
+    const [formProduto, setFormProduto] = useState<Produto>({ idCategoria: 0 } as Produto);
+    const { data: categorias } = useCategorias();
     const navigate = useNavigate();
     const showAlert = useAlert();
-
-    // teste
-    useEffect(() => {
-        console.log("categorias alterada:\n", categorias)
-    }, [categorias])
-    // teste
 
     useEffect(() => {
         const fetchProduto = async () => {
@@ -36,7 +29,7 @@ export const CreateForm: React.FC<CreateFormProps> = ({ id }) => {
                         ...(prevProduto as Produto),
                         ativo: true,
                         criadoEm: new Date().toISOString().split('T')[0],
-                        inativoEm: new Date().toISOString().split('T')[0],
+                        inativoEm: new Date().toISOString().split('T')[0]
                     }));
                 }
             } catch (error) {
@@ -49,37 +42,50 @@ export const CreateForm: React.FC<CreateFormProps> = ({ id }) => {
     }, [id]);
 
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChange = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
 
-        setFormProduto((prevProduto) => ({
+        if (name == "categoria") {
+            const id = Number(value);
+            if (id > 0) {
+                return setFormProduto((prev) => ({ ...prev, idCategoria: id }));
+            } else {
+                return showAlert("Erro ao alterar categoria!")
+            }
+        }
+
+        return setFormProduto((prevProduto) => ({
             ...(prevProduto as Produto),
             [name]: value,
         }));
-    };
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!formProduto.nome) {
-            showAlert('O campo nome é obrigatório!');
-            return;
+            return showAlert('O campo nome é obrigatório!');
         }
+
+        if (formProduto.idCategoria <= 0) {
+            return showAlert('O campo categoria é obrigatório!')
+        }
+
         if (formProduto.ativo === undefined) {
-            showAlert('O campo status é obrigatório!');
-            return;
+            return showAlert('O campo status é obrigatório!');
         }
 
         const produtoAjustado = {
             ...formProduto,
             criadoEm: new Date(formProduto.criadoEm).toISOString().replace('T', ' '),
             estoqueUn: Number(formProduto.estoqueUn),
+            idCategoria: Number(formProduto.idCategoria)
         };
 
         const resultado = await createProduto(produtoAjustado);
 
         if (resultado && !resultado.error) {
-            showAlert(`Produto ${produtoAjustado.idProduto} - ${produtoAjustado.nome} criado com sucesso!`);
+            showAlert(`Produto ${resultado.idProduto} - ${resultado.nome} criado com sucesso!`);
             navigate('/produtos');
             setTimeout(() => window.location.reload(), 2500)
         } else {
@@ -137,15 +143,17 @@ export const CreateForm: React.FC<CreateFormProps> = ({ id }) => {
                         </label>
                         <select
                             id="categorias"
-                            name="categorias"
-                            className="shadow appearance-none border border-amber-100 rounded w-full py-2 px-3 text-white bg-gray-950 leading-tight focus:outline-none focus:shadow-outline"
+                            name="idCategoria"
+                            value={formProduto.idCategoria}
+                            onChange={handleChange}
+                            className="shadow cursor-pointer appearance-none border border-amber-100 rounded w-full py-2 px-3 text-white bg-gray-950 leading-tight focus:outline-none focus:shadow-outline"
                         >
                             <option value="">Selecione uma categoria</option>
                             {(categorias && categorias.length > 0) && (
                                 categorias.map((categoria, i) => (
 
                                     <option key={i + "-" + categoria}
-                                        value={categoria.nome}>{categoria.nome}
+                                        value={categoria.idCategoria}>{categoria.nome}
                                     </option>
 
                                 ))

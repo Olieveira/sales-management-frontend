@@ -3,6 +3,7 @@ import api from "../api/api";
 export interface Produto {
     idProduto: number;
     nome: string;
+    idCategoria: number;
     descricao?: string;
     unidade: string;
     estoqueUn: number;
