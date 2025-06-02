@@ -1,6 +1,10 @@
 import React from 'react';
 import { ProdutoForm } from '../components/ProdutoForm';
 
-export const CreateForm: React.FC = () => {
-    return <ProdutoForm mode="create" />;
+interface CreateFormProps {
+    id?: number;
+}
+
+export const CreateForm: React.FC<CreateFormProps> = ({ id }) => {
+    return <ProdutoForm mode="create" id={id} />;
 };

@@ -47,7 +47,7 @@ const ProdutosList: React.FC<ProdutosListProps> = ({ produtos, card, list, selec
                 );
             }) : (<div className="w-full rounded-lg flex flex-col justify-center items-center bg-gray-800 p-2">
                 <FaExclamationTriangle size={24} className="text-red-200 animate-pulse" />
-                <p className="text-lg text-amber-100 p-2 text-center">Nenhum produto registrado!</p>
+                <p className="text-lg text-amber-100 p-2 text-center">Nenhum produto adicionado!</p>
             </div>)}
         </div>
     );

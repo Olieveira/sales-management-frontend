@@ -4,6 +4,7 @@ import { FaPlusSquare } from 'react-icons/fa';
 import { Loading } from '../components/Loading';
 import { VendasList } from '../components/VendasList';
 import { AnimatePresence, motion } from 'framer-motion';
+import { NenhumRegistroFull } from '../components/NenhumRegistro';
 
 export const Vendas = () => {
     const { data: vendas, isLoading, error } = useVendas();
@@ -30,7 +31,7 @@ export const Vendas = () => {
                 )}
 
                 {/* Conteúdo */}
-                {(!error && !isLoading) && (
+                {(!error && !isLoading && vendas && vendas.length > 0) && (
                     <div className='flex-col justify-center items-center pb-7'>
                         <div className="flex flex-col items-center justify-center gap-5">
                             <div className='flex w-full justify-center items-center'>
@@ -56,6 +57,11 @@ export const Vendas = () => {
                         </div>
                     </div>
                 )}
+
+                {(vendas && vendas.length <= 0) && (
+                    <NenhumRegistroFull pagina='vendas' />
+                )}
+                
             </motion.div >
         </AnimatePresence>
     )

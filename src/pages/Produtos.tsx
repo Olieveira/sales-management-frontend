@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { FaPlusSquare } from 'react-icons/fa';
 import { Loading } from '../components/Loading';
 import { AnimatePresence, motion } from 'framer-motion';
+import { NenhumRegistroFull } from '../components/NenhumRegistro';
 
 export const Produtos = () => {
     const { data: produtos, isLoading, error } = useProdutos();
@@ -29,7 +30,7 @@ export const Produtos = () => {
                     </div>
                 )}
                 {/* Conteúdo  */}
-                {(!error && !isLoading) && (
+                {(!error && !isLoading && produtos && produtos.length > 0) && (
                     <div className='flex-col justify-center items-center p-4'>
                         <div className="flex flex-col items-center justify-center gap-5">
                             <div className='flex w-full justify-center items-center'>
@@ -49,13 +50,15 @@ export const Produtos = () => {
                                     </Link>
                                 </div>
                             </div>
-                            {produtos && produtos.length > 0 ? (
+
+                            {(produtos && produtos.length > 0) && (
                                 <ProdutosList produtos={produtos.map(produto => ({ produto }))} card />
-                            ) : (
-                                <p className="text-gray-200"> Nenhum produto encontrado!</p>
                             )}
                         </div>
                     </div>
+                )}
+                {(produtos && produtos?.length <= 0) && (
+                    <NenhumRegistroFull pagina='produtos' />
                 )}
             </motion.div>
         </AnimatePresence>

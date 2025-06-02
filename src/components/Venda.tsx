@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { FaCube, FaUser, FaFlag, FaCalendar, FaCoins, FaShoppingCart, FaArrowCircleDown, FaArrowCircleUp } from "react-icons/fa";
+import { FaCube, FaUser, FaFlag, FaCalendar, FaCoins, FaShoppingCart, FaArrowCircleDown, FaArrowCircleUp, FaBoxOpen } from "react-icons/fa";
 import { deleteVenda, Venda } from "../services/vendasService";
 import ProdutosList from "./ProdutosList";
 import { useEffect, useState } from "react";
@@ -76,8 +76,9 @@ export const VendaCard: React.FC<VendaCardProps> = ({ venda, deleteProdutosBtn }
                                 ) : (
                                     <ProdutosList list produtos={[produtos[0]]} onDeleteFromList={deleteProdutosBtn ? handleDeleteProduto : undefined} />
                                 )) : (
-                                <div className="mr-3">
-                                    Nenhum produto encontrado!
+                                <div className="flex flex-col justify-center items-center p-1">
+                                    <FaBoxOpen size={24} className="text-gray-700 mb-2 animate-bounce" />
+                                    <span className="text-base text-gray-700 font-semibold">Nenhum produto registrado!</span>
                                 </div>
                             )
                         )}

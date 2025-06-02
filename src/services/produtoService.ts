@@ -24,7 +24,7 @@ export const getProduto = async (idProduto: number): Promise<Produto> => {
 };
 
 export const createProduto = async (produto: Omit<Produto, 'idProduto' | 'criadoEm'>) => {
-    const response = await api.post('/produtos/c', produto);
+    const response = await api.post('/produtos/', produto);
     return response.data;
 };
 

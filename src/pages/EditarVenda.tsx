@@ -11,6 +11,7 @@ import { usePlataformas } from '../hooks/usePlataformas';
 import { createItensVenda, deleteItensVenda, ItemVenda, updateItensVenda } from '../services/itensVendaService';
 import { useAlert, useSelectAlert } from '../components/AlertContext';
 import { AnimatePresence, motion } from 'framer-motion';
+import { NenhumRegistroMini } from '../components/NenhumRegistro';
 
 interface EditFormProps {
     id?: Number;
@@ -281,7 +282,12 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                             <div className='flex justify-center items-center mb-4'>
                                 {venda && venda.itensVenda && venda?.itensVenda.length > 0 ? (
                                     <ProdutosList list produtos={produtos} onDeleteFromList={handleDeleteProduto} onSelectItem={() => handleAddNewProduct} />
-                                ) : (<div>Sem produtos ou undefined!</div>)}
+                                ) :
+
+                                    <div className='w-full rounded-lg flex flex-col justify-center items-center bg-gray-800 p-2'>
+                                        <NenhumRegistroMini />
+                                    </div>
+                                }
                             </div>
 
                             <div className='justify-center items-center animate-pulse ease-in-out duration-300'>
@@ -342,11 +348,16 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
                             >
+                                <FaWindowClose
+                                    onClick={() => setSelectProduto(!selectProduto)}
+                                    aria-label="Fechar seleção de produto"
+                                    className="relative w-10 h-10 top-0 right-0 px-2 py-1 cursor-pointer transition text-red-300 shadow-lg animate-pulse"
+                                />
                                 <div className="flex justify-around items-center gap-5 mb-4">
                                     <FaCubes size={28} className="text-amber-100" />
                                     <h3 className="text-amber-100 text-2xl font-bold drop-shadow">Selecione o produto</h3>
                                 </div>
-                                <div className="p-6 w-full max-w-2xl max-h-[60vh] overflow-y-auto flex justify-start items-center rounded-2xl bg-gray-900 shadow-2xl border-2 border-amber-100">
+                                <div className="p-6 w-80 max-w-2xl max-h-[60vh] overflow-y-auto flex justify-start items-center rounded-2xl bg-gray-900 shadow-2xl border-2 border-amber-100">
                                     {todosProdutos && todosProdutos.length > 0 ? (
                                         <ProdutosList
                                             selectItem
@@ -356,18 +367,11 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                                             onSelectItem={handleAddNewProduct}
                                         />
                                     ) : (
-                                        <div className="text-lg w-full text-amber-100 text-center flex justify-center items-center">
-                                            Nenhum produto encontrado!
-                                        </div>
+                                        <NenhumRegistroMini />
                                     )}
                                 </div>
-                                <button
-                                    onClick={() => setSelectProduto(!selectProduto)}
-                                    className="absolute top-6 right-6 px-2 py-1 rounded-full bg-amber-100 hover:bg-amber-200 transition text-gray-900 shadow-lg animate-pulse"
-                                    aria-label="Fechar seleção de produto"
-                                >
-                                    <FaWindowClose size={28} />
-                                </button>
+
+
                             </motion.div>
                         )}
                     </AnimatePresence>
