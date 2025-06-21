@@ -13,10 +13,19 @@ export function Nav() {
     const location = useLocation();
     const [activePath, setActivePath] = useState<string>(location.pathname);
     const [expanded, setExpanded] = useState<boolean>(true)
+    const [screenWidth, setScreenWidth] = useState(0);
 
     useEffect(() => {
-        setActivePath(location.pathname);
-        setExpanded(false)
+        const handleResize = () => setScreenWidth(window.innerWidth);
+        handleResize();
+        window.addEventListener('resize', handleResize);
+
+        return () => window.removeEventListener('resize', handleResize);
+    }, [])
+
+    useEffect(() => {
+        setActivePath(location.pathname)
+        setExpanded(window.innerHeight > 640)
     }, [location.pathname]);
 
     const menuItems: MenuItem[] = [
@@ -33,7 +42,7 @@ export function Nav() {
                 animate={{ x: 0, width: expanded ? 176 : 48 }}
                 exit={{ x: -100, width: 48 }}
                 transition={{ duration: 0.8, ease: 'easeInOut', type: 'spring' }}
-                className={`absolute flex flex-col top-20 z-20 shadow-md shadow-slate-500/30 rounded-br-2xl bg-gray-900/95 items-center justify-center py-6 border-r border-gray-800 ${expanded ? 'h-auto' : 'h-5'}`}>
+                className={`fixed flex flex-col z-20 ${(!expanded || screenWidth < 640) && 'top-20'} py-6 shadow-md shadow-slate-500/30 ${expanded ? 'sm:rounded-br-none' : 'sm:rounded-br-2xl'} sm:rounded-tr-none rounded-tr-2xl rounded-br-2xl bg-gray-900/95 items-center justify-center border-r border-gray-800 ${expanded ? screenWidth > 640 ? 'h-dvh' : 'h-fit' : 'h-5'}`}>
 
                 {expanded && (
                     <motion.div

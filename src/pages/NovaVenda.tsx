@@ -273,7 +273,7 @@ export const NewVendaForm: React.FC<CreateFormProps> = ({ id }) => {
                         name='criadoEm'
                         value={venda?.criadoEm ? new Date(venda.criadoEm).toISOString().split('T')[0] : '-'}
                         onChange={handleChange}
-                        className='text-center w-3xs shadow appearance-none border border-amber-100 rounded py-2 px-3 text-white flex justify-center items-center leading-tight focus:outline-none focus:shadow-outline'
+                        className='flex justify-center items-center w-3xs shadow appearance-none border border-amber-100 rounded py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline'
                     />
                 </div>
 

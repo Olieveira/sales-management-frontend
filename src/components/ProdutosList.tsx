@@ -41,7 +41,7 @@ const ProdutosList: React.FC<ProdutosListProps> = ({ produtos, card, list, selec
         <div className={`flex flex-wrap gap-4 justify-center items-center w-full`}>
             {produtos.length > 0 ? produtos.map((produto) => {
                 return (
-                    <AnimatePresence>
+                    <AnimatePresence key={produto.produto.idProduto}>
                         {renderProduto(formatRender(produto), produto.quantidade)}
                     </AnimatePresence>
                 );

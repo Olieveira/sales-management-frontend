@@ -10,15 +10,15 @@ const Layout: React.FC = () => {
   return (
     <AlertProvider>
       <div className="min-h-screen max-w-full flex flex-col bg-gradient-to-br from-gray-800 via-gray-900 to-gray-950">
+        <Header />
         <AnimatePresence>
-          <Header />
-          <div className="flex flex-1 h-fit">
-            <Nav />
-            <main className="flex-1">
-              <Outlet />
-            </main>
-          </div>
+          <Nav />
         </AnimatePresence>
+        <div className="flex flex-1 h-fit">
+          <main className="flex-1">
+            <Outlet />
+          </main>
+        </div>
       </div>
     </AlertProvider>
   );

@@ -5,7 +5,7 @@ const Header: React.FC = () => {
 
   return (
     <AnimatePresence>
-      <motion.header className="z-20 h-20 flex items-center justify-center bg-gradient-to-b shadow-md shadow-slate-500/30 from-gray-900/70 to-gray-950/80"
+      <motion.header className="z-30 h-20 flex items-center justify-center bg-gradient-to-b shadow-md shadow-slate-500/30 from-gray-900/70 to-gray-950/80"
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: -100, opacity: 0 }}

@@ -223,7 +223,7 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                             type='text'
                             id='nomeComprador'
                             name='nomeComprador'
-                            value={venda?.nomeComprador}
+                            value={venda?.nomeComprador ?? ""}
                             onChange={handleChange}
                             className='shadow text-center appearance-none border border-amber-100 rounded w-52 py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline'
                         />
@@ -280,7 +280,7 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                             </div>
 
                             <div className='flex justify-center items-center mb-4'>
-                                {venda && venda.itensVenda && venda?.itensVenda.length > 0 ? (
+                                {venda && venda.itensVenda && (venda?.itensVenda.length > 0 || produtos.length > 0) ? (
                                     <ProdutosList list produtos={produtos} onDeleteFromList={handleDeleteProduto} onSelectItem={() => handleAddNewProduct} />
                                 ) :
 
@@ -309,7 +309,7 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                             id='total'
                             name='total'
                             step='0.01'
-                            value={venda?.total}
+                            value={venda?.total ?? ""}
                             onChange={handleChange}
                             className='max-w-36 text-center shadow appearance-none border border-amber-100 rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline'
                         />
@@ -328,7 +328,7 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                             name='criadoEm'
                             value={venda?.criadoEm ? new Date(venda.criadoEm).toISOString().split('T')[0] : '-'}
                             onChange={handleChange}
-                            className='text-center w-3xs shadow appearance-none border border-amber-100 rounded py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline'
+                            className='flex justify-center w-3xs shadow appearance-none border border-amber-100 rounded py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline'
                         />
                     </div>
 
