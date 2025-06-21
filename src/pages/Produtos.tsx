@@ -1,5 +1,5 @@
 import { useProdutos } from '../hooks/useProdutos';
-import ProdutosList from '../components/ProdutosList';
+import ProdutosList from '../components/produto/ProdutosList';
 import { Link } from 'react-router-dom';
 import { FaPlusSquare } from 'react-icons/fa';
 import { Loading } from '../components/Loading';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ProdutoForm } from '../components/ProdutoForm';
+import { ProdutoForm } from '../components/produto/ProdutoForm';
 
 interface CreateFormProps {
     id?: number;

@@ -1,10 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
 import { FaCube, FaUser, FaFlag, FaCalendar, FaCoins, FaShoppingCart, FaArrowCircleDown, FaArrowCircleUp, FaBoxOpen } from "react-icons/fa";
-import { deleteVenda, Venda } from "../services/vendasService";
-import ProdutosList from "./ProdutosList";
+import { deleteVenda, Venda } from "../../services/vendasService";
+import ProdutosList from "../produto/ProdutosList";
 import { useEffect, useState } from "react";
-import { Produto } from "../services/produtoService";
-import { useAlert, useSelectAlert } from "./AlertContext";
+import { Produto } from "../../services/produtoService";
+import { useAlert, useSelectAlert } from "../AlertContext";
 
 interface VendaCardProps {
     venda: Venda;

@@ -1,5 +1,5 @@
 import { FaExclamationTriangle } from "react-icons/fa";
-import { Produto } from "../services/produtoService";
+import { Produto } from "../../services/produtoService";
 import { ProdutoCard, ProdutoListItem, SelectProdutoListItem } from "./Produto";
 import { AnimatePresence } from "framer-motion";
 

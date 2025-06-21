@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
-import { Venda } from "../services/vendasService";
-import { VendaCard } from "./Venda";
+import { Venda } from "../../services/vendasService";
+import { VendaCard } from "../venda/Venda";
 
 interface VendasListProps {
     vendas: Venda[];
@@ -13,7 +13,7 @@ export const VendasList: React.FC<VendasListProps> = ({ vendas, deleteProdutosBt
             {vendas.length > 0 && vendas.map((venda, i) => (
 
                 <motion.div
-                    initial={{y: -100, opacity: 0 }}
+                    initial={{ y: -100, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     exit={{ y: -100, opacity: 0 }}
                     transition={{ duration: 0.8, ease: 'easeInOut', type: 'spring', delay: Number('0.' + i) }}

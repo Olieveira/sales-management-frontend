@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { FaHome, FaShoppingCart, FaWarehouse, FaBoxes, FaAngleDoubleUp, FaAngleDoubleDown } from 'react-icons/fa';
+import { FaHome, FaShoppingCart, FaWarehouse, FaBoxes, FaAngleDoubleUp, FaAngleDoubleDown, FaDraftingCompass } from 'react-icons/fa';
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -33,6 +33,7 @@ export function Nav() {
         { label: 'Produtos', path: '/produtos', icon: <FaBoxes /> },
         { label: 'Vendas', path: '/vendas', icon: <FaShoppingCart /> },
         { label: 'Estoque', path: '/estoque', icon: <FaWarehouse /> },
+        { label: 'Fabricação', path: '/processos', icon: <FaDraftingCompass /> }
     ];
 
     return (

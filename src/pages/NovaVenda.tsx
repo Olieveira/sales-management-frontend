@@ -3,7 +3,7 @@ import { FaCalendarAlt, FaClock, FaCommentDollar, FaCubes, FaDollarSign, FaPlusC
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getVenda, Venda, createVenda } from '../services/vendasService';
-import ProdutosList from '../components/ProdutosList';
+import ProdutosList from '../components/produto/ProdutosList';
 import { Produto } from '../services/produtoService';
 import { useProdutos } from '../hooks/useProdutos';
 import { useStatus } from '../hooks/useStatus';

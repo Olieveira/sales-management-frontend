@@ -10,6 +10,7 @@ import { Vendas } from "./pages/Vendas";
 import { NewVendaForm } from "./pages/NovaVenda";
 import { Estoque } from "./pages/Estoque";
 import { AnimatePresence } from "framer-motion";
+import { Fabricacao } from "./pages/Fabricacao";
 
 const ProdutoWrapper = () => {
     const { id } = useParams<{ id: string }>();
@@ -38,6 +39,7 @@ export const AppRoutes = () => {
             <BrowserRouter>
                 <Routes>
                     <Route element={<Layout />} >
+                        <Route path="*" element={<Home />} />
                         <Route path="/produtos" element={<Produtos />} />
                         <Route path="/produtos/edit/:id" element={<ProdutoWrapper />} />
                         <Route path="/produtos/new" element={<CreateForm />} />
@@ -50,7 +52,7 @@ export const AppRoutes = () => {
                         <Route path="/estoque" element={<Estoque />} />
                         <Route path="/estoque/new" element={<Estoque id={0} />} />
                         <Route path="/estoque/new/:id" element={<EstoqueDuplicateWrapper />} />
-                        <Route path="*" element={<Home />} />
+                        <Route path="/processos" element={<Fabricacao />} />
                     </Route>
                 </Routes>
             </BrowserRouter>

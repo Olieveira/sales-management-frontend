@@ -2,7 +2,7 @@ import { useVendas } from '../hooks/useVendas';
 import { Link } from 'react-router-dom';
 import { FaPlusSquare } from 'react-icons/fa';
 import { Loading } from '../components/Loading';
-import { VendasList } from '../components/VendasList';
+import { VendasList } from '../components/venda/VendasList';
 import { AnimatePresence, motion } from 'framer-motion';
 import { NenhumRegistroFull } from '../components/NenhumRegistro';
 

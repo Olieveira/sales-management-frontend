@@ -1,6 +1,6 @@
 import { useEstoque } from '../hooks/useEstoque';
 import { Loading } from '../components/Loading';
-import { EstoqueList } from '../components/EstoqueList';
+import { EstoqueList } from '../components/estoque/EstoqueList';
 import { AnimatePresence, motion } from 'framer-motion';
 import { NenhumRegistroFull } from '../components/NenhumRegistro';
 import { useEffect, useState } from 'react';
@@ -185,11 +185,11 @@ export const Estoque: React.FC<EstoqueProps> = ({ id }) => {
                     <div className='h-screen w-full flex flex-row flex-wrap'>
                         {/* Loading */}
                         {isLoading && (
-                            <Loading key={'loading'} texto={'produtos'} />
+                            <Loading key={'loading'} texto={'Materiais'} />
                         )}
                         {/* Error */}
                         {error && (
-                            <Loading key={'error'} texto={'produtos'} error />
+                            <Loading key={'error'} texto={'Materiais'} error />
                         )}
                     </div>
                 )}
@@ -244,7 +244,7 @@ export const Estoque: React.FC<EstoqueProps> = ({ id }) => {
                                 <h3 className="text-amber-100 text-lg font-bold mb-4">{selectedItemMode == 'edit' ? 'Editar' : 'Criar'} Item</h3>
                                 <form onSubmit={selectedItemMode == 'edit' ? handleSubmitEdit : handleSubmitCreate}>
                                     <div className="mb-4">
-                                        <label className="block text-amber-100 text-sm font-bold mb-2">Produto</label>
+                                        <label className="block text-amber-100 text-sm font-bold mb-2">Material</label>
                                         <input
                                             type="text"
                                             id="nome"
@@ -271,6 +271,7 @@ export const Estoque: React.FC<EstoqueProps> = ({ id }) => {
                                         <label className="block text-amber-100 text-sm font-bold mb-2">Unidade</label>
                                         <input
                                             type="text"
+                                            placeholder='ex.: Kit'
                                             value={selectedItem.unidade}
                                             className="w-full px-3 py-2 text-gray-700 bg-gray-200 rounded"
                                             onChange={(e) =>
