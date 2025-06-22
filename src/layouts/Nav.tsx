@@ -25,7 +25,7 @@ export function Nav() {
 
     useEffect(() => {
         setActivePath(location.pathname)
-        setExpanded(window.innerHeight > 640)
+        setExpanded(window.innerWidth > 640)
     }, [location.pathname]);
 
     const menuItems: MenuItem[] = [
@@ -43,7 +43,7 @@ export function Nav() {
                 animate={{ x: 0, width: expanded ? 176 : 48 }}
                 exit={{ x: -100, width: 48 }}
                 transition={{ duration: 0.8, ease: 'easeInOut', type: 'spring' }}
-                className={`fixed flex flex-col z-20 ${(!expanded || screenWidth < 640) && 'top-20'} py-6 shadow-md shadow-slate-500/30 ${expanded ? 'sm:rounded-br-none' : 'sm:rounded-br-2xl'} sm:rounded-tr-none rounded-tr-2xl rounded-br-2xl bg-gray-900/95 items-center justify-center border-r border-gray-800 ${expanded ? screenWidth > 640 ? 'h-dvh' : 'h-fit' : 'h-5'}`}>
+                className={`${screenWidth > 640 ? 'static' : 'fixed'} ${(!expanded || screenWidth < 640) && 'top-20'} flex flex-col z-20 py-6 shadow-md shadow-slate-500/30 ${expanded ? 'sm:rounded-br-none' : 'sm:rounded-br-2xl'} sm:rounded-tr-none rounded-tr-2xl rounded-br-2xl bg-gray-900/95 items-center border-r border-gray-800 ${(expanded && screenWidth > 640) ? 'h-auto justify-start' : 'h-fit justify-center'}`}>
 
                 {expanded && (
                     <motion.div
