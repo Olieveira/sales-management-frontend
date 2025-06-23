@@ -3,7 +3,7 @@ import { useProcessos } from "../../hooks/useProcessos";
 import { NenhumRegistroMini } from "../NenhumRegistro";
 
 export const ProcessList: React.FC = () => {
-    const { data: processos, isLoading, error } = useProcessos();
+    const { data: processos } = useProcessos();
 
     return (
         <section className="rounded-2xl bg-gray-900 w-56 sm:w-full shadow-md shadow-slate-600/20">

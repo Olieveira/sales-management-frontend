@@ -4,6 +4,7 @@ import { getAll } from "../services/processoService"
 export const useProcessos = () => {
     return useQuery({
         queryKey: ['processo'],
-        queryFn: getAll
+        queryFn: getAll,
+        staleTime: 1000 * 60 * 5
     })
 }

@@ -5,6 +5,6 @@ export const useItensVenda = () => {
     return useQuery({
         queryKey: ['itemvenda'],
         queryFn: getItensVenda,
-        staleTime: 1000 * 60 * 5,
+        staleTime: 1000 * 60 * 5
     });
 };
