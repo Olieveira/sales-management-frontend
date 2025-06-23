@@ -285,7 +285,7 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                                 ) :
 
                                     <div className='w-full rounded-lg flex flex-col justify-center items-center bg-gray-800 p-2'>
-                                        <NenhumRegistroMini />
+                                        <NenhumRegistroMini pagina='vendas' />
                                     </div>
                                 }
                             </div>
@@ -367,7 +367,7 @@ export const EditForm: React.FC<EditFormProps> = ({ id }) => {
                                             onSelectItem={handleAddNewProduct}
                                         />
                                     ) : (
-                                        <NenhumRegistroMini />
+                                        <NenhumRegistroMini pagina='vendas' />
                                     )}
                                 </div>
 

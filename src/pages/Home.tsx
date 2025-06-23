@@ -21,7 +21,7 @@ export const Home = () => {
                     <Link to="/estoque" className="shadow-2xl shadow-gray-800 transition-all duration-100 cursor-pointer hover:rounded-4xl hover:w-36 hover:h-36 w-32 h-32 rounded-2xl border-4 border-green-700 bg-gray-900 flex justify-center items-center">
                         <h2 className='font-bold text-amber-100 text-lg'>Estoque</h2>
                     </Link>
-                    <Link to="/" className="shadow-2xl shadow-gray-800 transition-all duration-100 cursor-pointer hover:rounded-4xl hover:w-36 hover:h-36 w-32 h-32 rounded-2xl border-4 border-amber-700 bg-gray-900 flex justify-center items-center">
+                    <Link to="/processos" className="shadow-2xl shadow-gray-800 transition-all duration-100 cursor-pointer hover:rounded-4xl hover:w-36 hover:h-36 w-32 h-32 rounded-2xl border-4 border-amber-700 bg-gray-900 flex justify-center items-center">
                         <h2 className='font-bold text-amber-100 text-lg'>Fabricação</h2>
                     </Link>
                 </motion.div>

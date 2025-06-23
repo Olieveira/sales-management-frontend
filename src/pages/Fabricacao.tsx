@@ -2,11 +2,7 @@ import React from "react";
 import { HistoricProcess } from "../components/fabricacao/HistoricProcess";
 import { ProcessList } from "../components/fabricacao/ProcessList";
 
-interface FabricacaoProps {
-
-}
-
-export const Fabricacao: React.FC<FabricacaoProps> = () => {
+export const Fabricacao: React.FC = () => {
     return (
         <div className="w-full h-fit p-10">
             <h1 className="text-4xl font-bold text-amber-50 text-center mb-16">

@@ -312,7 +312,7 @@ export const NewVendaForm: React.FC<CreateFormProps> = ({ id }) => {
                                         onSelectItem={handleAddNewProduct}
                                     />
                                 ) : (
-                                    <NenhumRegistroMini />
+                                    <NenhumRegistroMini pagina='vendas' />
                                 )}
                             </div>
 

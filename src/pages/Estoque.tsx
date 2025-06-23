@@ -99,10 +99,13 @@ export const Estoque: React.FC<EstoqueProps> = ({ id }) => {
     const handleSubmitCreate = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        if (selectedItem === selectedOrigItem) {
+            return showAlert("Nenhuma alteração realizada!");
+        }
+
         if (!selectedItem?.nome || selectedItem.quantidade == null || selectedItem.unidade === "" ||
             selectedItem.estoqueMin == null || !selectedItem.criadoEm || !selectedItem.fornecedor.nome) {
-            showAlert("Preencha todos os campos!");
-            return;
+            return showAlert("Preencha todos os campos!");
         }
 
         try {
